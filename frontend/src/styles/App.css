@@ -1,0 +1,87 @@
+/* First, disable body scrolling */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevents body scrolling */
+    height: 100vh; /* Full viewport height */
+  }
+  
+  .app-container {
+    height: 100vh; /* Full viewport height */
+    background-color: #f0f2f5;
+    padding: 20px;
+    position: relative;
+    overflow: hidden; /* Ensures no scrolling at container level */
+    box-sizing: border-box; /* Includes padding in height calculation */
+  }
+  
+  .content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 100%; /* Takes full height of app-container minus padding */
+    overflow-y: auto; /* Enables scrolling for notes */
+    position: relative;
+  }
+  
+  .cabinet-header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    z-index: 10;
+    text-align: center;
+  }
+  
+  .cabinet-header h1 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  
+  .notes-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .add-note-button {
+    position: fixed;
+    top: 20px;
+    right: calc((100% - 800px) / 2 - 60px);
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    z-index: 100;
+  }
+  
+  .add-note-button:hover {
+    background-color: #45a049;
+  }
+  
+  .no-notes {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }
+  
+  @media (max-width: 900px) {
+    .add-note-button {
+      right: 20px;
+    }
+  }
