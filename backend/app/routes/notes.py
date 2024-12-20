@@ -48,6 +48,15 @@ def create_note():
         if note_type == 'task':
             note_data.setdefault('tasks', [])  # Initialize empty tasks list if not provided
             note_data.setdefault('content', '')  # Set empty content for task notes
+        elif note_type == 'calendar':
+            note_data.setdefault('viewType', 'month')  # Default to month view
+            note_data.setdefault('calendarData', [])   # Initialize empty calendar data array
+            note_data.setdefault('views', [{          # Initialize with default view
+                'id': 'view-1',
+                'viewType': 'month',
+                'selectedDate': note_data.get('timestamp')
+            }])
+            note_data.setdefault('content', '')        # Set empty content for general note content
         else:
             note_data.setdefault('content', '')  # Set empty content for standard notes
 
@@ -94,6 +103,10 @@ def update_note(note_id):
         # Handle content based on note type
         if update_data['type'] == 'task':
             update_data['tasks'] = note_data.get('tasks', [])
+        elif update_data['type'] == 'calendar':
+            update_data['viewType'] = note_data.get('viewType', 'month')
+            update_data['calendarData'] = note_data.get('calendarData', [])
+            update_data['views'] = note_data.get('views', [])
         else:
             update_data['content'] = note_data.get('content', '')
         

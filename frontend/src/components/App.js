@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PlusCircle, ListTodo, StickyNote } from 'lucide-react';
+import { PlusCircle, ListTodo, StickyNote, Calendar } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000';
 
@@ -59,6 +59,9 @@ function App() {
       // Add type-specific initial data
       if (type === 'task') {
         noteData.tasks = [];
+      } else if (type === 'calendar') {
+        noteData.viewType = 'month';
+        noteData.calendarData = [];
       }
 
       const response = await fetch(`${API_URL}/api/notes`, {
@@ -122,7 +125,9 @@ function App() {
             content: note.content || '',
             order: note.order,
             type: note.type || 'standard',
-            tasks: note.tasks || []
+            tasks: note.tasks || [],
+            viewType: note.viewType,
+            calendarData: note.calendarData || []
           }),
         })
       );
@@ -166,6 +171,13 @@ function App() {
           >
             <ListTodo className="mr-2 h-4 w-4" />
             <span>Task List</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            onClick={() => createNote('calendar')}
+            className="flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-slate-100"
+          >
+            <Calendar className="mr-2 h-4 w-4" />
+            <span>Calendar Note</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

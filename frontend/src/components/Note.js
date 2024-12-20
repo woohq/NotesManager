@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import TaskNote from './TaskNote';
+import CalendarNote from './CalendarNote';
 
 const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  // Start expanded for calendar notes
+  const [isExpanded, setIsExpanded] = useState(note.type === 'calendar' ? true : !note.title);
   const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
   const [title, setTitle] = useState(note.title || '');
   const [content, setContent] = useState(note.content || '');
@@ -14,6 +16,8 @@ const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
   // Update localNote when props change
   useEffect(() => {
     setLocalNote(note);
+    setContent(note.content || '');
+    setTitle(note.title || '');
   }, [note]);
 
   const updateNote = async (updates) => {
@@ -23,8 +27,13 @@ const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
         ...updates,
         title,
         order: note.order,
-        type: note.type
+        type: note.type,
       };
+
+      // For calendar notes, make sure to preserve views
+      if (note.type === 'calendar' && !updates.views && localNote.views) {
+        updatedNote.views = localNote.views;
+      }
 
       const response = await fetch(`http://localhost:5000/api/notes/${note._id}`, {
         method: 'PUT',
@@ -105,6 +114,12 @@ const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
       return (
         <div className="note-content">
           <TaskNote note={localNote} onUpdate={handleNoteUpdate} />
+        </div>
+      );
+    } else if (note.type === 'calendar') {
+      return (
+        <div className="note-content">
+          <CalendarNote note={localNote} onUpdate={handleNoteUpdate} />
         </div>
       );
     }

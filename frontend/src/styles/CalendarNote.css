@@ -1,0 +1,77 @@
+/* Calendar note specific styles */
+.calendar-note {
+    padding: 16px;
+    background: white;
+  }
+  
+  /* Calendar grid styles */
+  .calendar-grid {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  /* Selected day content styles */
+  .selected-day-content {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    background: white;
+  }
+  
+  /* Week view day styles */
+  .week-view-day {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  /* Calendar navigation styles */
+  .calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  /* Calendar view container */
+  .calendar-view-container {
+    background: white;
+    transition: all 0.2s ease;
+  }
+  
+  .calendar-view-container:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Add some space between multiple calendar views */
+  .calendar-view-container + .calendar-view-container {
+    margin-top: 1.5rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .calendar-month-view {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .calendar-week-view {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .calendar-view-container {
+      padding: 12px;
+    }
+    
+    .calendar-nav {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
