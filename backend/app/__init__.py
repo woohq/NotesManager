@@ -11,8 +11,14 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    # Configure CORS
-    CORS(app, supports_credentials=True)
+    # Configure CORS with more specific settings
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:3000"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type"]
+        }
+    })
     
     # Initialize MongoDB connection
     try:
@@ -30,6 +36,13 @@ def create_app(config_class=Config):
     from app.routes import notes, cabinets
     app.register_blueprint(notes.bp)
     app.register_blueprint(cabinets.bp)
+    
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        return response
 
     @app.route('/health')
     def health_check():

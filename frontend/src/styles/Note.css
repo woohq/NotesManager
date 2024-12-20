@@ -1,99 +1,280 @@
+/* Note container */
 .note {
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    overflow: hidden;
-    transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.note:hover {
+  border-color: #e5e7eb;
+}
+
+/* Note wrapper - Draggable container */
+.note-wrapper {
+  transition: all 0.2s ease;
+}
+
+.note-wrapper.is-dragging {
+  cursor: grabbing;
+}
+
+.note-wrapper.is-dragging .note {
+  background-color: white;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
+}
+
+/* Note header */
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f9fafb;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: grab;
+}
+
+.note-header:active {
+  cursor: grabbing;
+}
+
+.note-header.editing {
+  background-color: transparent;
+  border-bottom-color: transparent;
+  cursor: default;
+}
+
+/* Title styling */
+.title-display {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px 0;
+}
+
+.title-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+  padding: 4px 0;
+  width: 100%;
+  outline: none;
+}
+
+.title-input:focus {
+  background: transparent;
+}
+
+.title-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Delete button */
+.delete-button {
+  padding: 4px 8px;
+  margin: -4px -8px -4px 8px;
+  background-color: transparent;
+  color: #9ca3af;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.delete-button:hover {
+  color: #ef4444;
+  background-color: #fee2e2;
+}
+
+/* Note content */
+.note-content {
+  padding: 12px 16px;
+  background-color: white;
+}
+
+.content-textarea {
+  width: 100%;
+  min-height: 20px;
+  padding: 0;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #4b5563;
+  background: transparent;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+}
+
+.content-textarea:focus {
+  background: transparent;
+}
+
+.content-textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Task note specific styling */
+.task-note {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: white;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.task-item:hover,
+.task-item:focus-within {
+  background-color: #f9fafb;
+}
+
+.task-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.task-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 4px;
+  font-size: 0.9375rem;
+  color: #4b5563;
+}
+
+.task-input:focus {
+  outline: none;
+}
+
+.task-delete {
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.task-delete:hover {
+  color: #ef4444;
+  background-color: #fee2e2;
+}
+
+.task-item.completed .task-input {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.add-task {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  border-radius: 4px;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.add-task:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+/* Expansion animation */
+.note.expanded .note-content {
+  animation: expandContent 0.2s ease;
+}
+
+@keyframes expandContent {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
-  
-  .note.expanded {
-    border-color: #bdbdbd;
-  }
-  
-  .note-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-    cursor: pointer;
-    padding: 0.5rem 0.5rem 0rem 0.5rem;
-  }
-  
-  
-  .note-header:not(.editing):hover {
-    background-color: #f8f8f8;
-  }
-  
-  .note-content {
-    margin-top: -0.5rem; /* Pull the content up closer to the header */
-    padding: 0rem 0.5rem 0.5rem 0.5rem;
-  }
-  
-  .content-textarea {
-    width: 100%;
-    min-height: 20px; /* Reduced from 100px to allow for true auto-height */
-    padding: 0;
-    border: none;
-    font-family: inherit;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    background: transparent;
-    display: block;
-    resize: none; /* Remove the resize handle */
-    overflow: hidden; /* Hide scrollbar */
-    box-sizing: border-box;
-  }
-  
-  .content-textarea:focus {
-    outline: none;
-  }
-  
-  .delete-button {
-    padding: 0.5rem;
-    background-color: transparent;
-    color: #ff4444;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.7;
-    z-index: 1;
-  }
-  
-  .delete-button:hover {
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
-  
-  .title-display {
-    flex: 1;
-    font-size: 1.1rem;
-    padding: 0;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
+}
+
+/* Focus states */
+.note:focus-within {
+  border-color: #e2e4e9;
+}
+
+/* Remove default focus outlines */
+.title-input:focus,
+.content-textarea:focus,
+.task-input:focus {
+  outline: none;
+  background: transparent;
+}
+
+/* Remove default focus ring from Chrome */
+.title-input:focus-visible,
+.content-textarea:focus-visible,
+.task-input:focus-visible {
+  outline: none;
+  -webkit-appearance: none;
+}
+
+/* Empty state */
+.note:empty {
+  border-style: dashed;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .note {
+    border-radius: 6px;
   }
 
+  .note-header {
+    padding: 10px 12px;
+  }
+
+  .note-content {
+    padding: 10px 12px;
+  }
+
+  .title-display,
   .title-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    font-size: 1.1rem;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    outline: none;
-    cursor: text;
+    font-size: 0.9375rem;
   }
 
-  .title-input::selection {
-    background: transparent;
+  .content-textarea {
+    font-size: 0.875rem;
   }
-  
-  .note-header:not(.editing) .title-display:hover {
-    cursor: grab;
-  }
-  
-  .note-header:not(.editing) .title-display:active {
-    cursor: grabbing;
-  }
+}

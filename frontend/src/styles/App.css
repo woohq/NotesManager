@@ -1,87 +1,159 @@
-/* First, disable body scrolling */
+/* Base layout */
 body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Prevents body scrolling */
-    height: 100vh; /* Full viewport height */
-  }
-  
-  .app-container {
-    height: 100vh; /* Full viewport height */
-    background-color: #f0f2f5;
-    padding: 20px;
-    position: relative;
-    overflow: hidden; /* Ensures no scrolling at container level */
-    box-sizing: border-box; /* Includes padding in height calculation */
-  }
-  
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f2f5;
+}
+
+.app-container {
+  height: 100vh;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.content-wrapper {
+  max-width: 800px;
+  width: 100%;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+  transition: box-shadow 0.3s ease;
+}
+
+.content-wrapper:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Header styling */
+.cabinet-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 24px 20px;
+  border-bottom: 1px solid #eee;
+  z-index: 10;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.cabinet-header h1 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* Notes container */
+.notes-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: calc(100% - 80px);
+}
+
+/* Placeholder styling */
+.notes-container [data-rbd-placeholder-context-id] {
+  margin-bottom: 15px;
+  opacity: 0.6;
+}
+
+.notes-container.dragging-over {
+  background-color: #f8f9fa;
+}
+
+/* Add button */
+.add-note-button {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: #3b82f6;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+  z-index: 100;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.add-note-button:hover {
+  background-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.add-note-button:active {
+  transform: translateY(1px);
+}
+
+/* Empty state */
+.no-notes {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+/* Scrollbar styling */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Dropdown menu styling */
+[data-radix-popper-content-wrapper] {
+  z-index: 200 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 840px) {
   .content-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    height: 100%; /* Takes full height of app-container minus padding */
-    overflow-y: auto; /* Enables scrolling for notes */
-    position: relative;
-  }
-  
-  .cabinet-header {
-    position: sticky;
-    top: 0;
-    background-color: white;
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    z-index: 10;
-    text-align: center;
-  }
-  
-  .cabinet-header h1 {
     margin: 0;
-    color: #333;
-    font-size: 1.5rem;
-    font-weight: 500;
+    border-radius: 0;
   }
-  
-  .notes-container {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+
+  .app-container {
+    padding: 0;
   }
-  
+
   .add-note-button {
-    position: fixed;
-    top: 20px;
-    right: calc((100% - 800px) / 2 - 60px);
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
-    transition: background-color 0.2s;
-    z-index: 100;
+    right: 16px;
+    bottom: 16px;
   }
-  
-  .add-note-button:hover {
-    background-color: #45a049;
-  }
-  
-  .no-notes {
-    text-align: center;
-    color: #666;
-    font-style: italic;
-  }
-  
-  @media (max-width: 900px) {
-    .add-note-button {
-      right: 20px;
-    }
-  }
+}

@@ -1,44 +1,126 @@
 import React, { useState, useRef, useEffect } from 'react';
+import TaskNote from './TaskNote';
 
-const Note = ({ note, onDelete, onUpdate }) => {
+const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [isEditingTitle, setIsEditingTitle] = useState(true);
+  const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
   const [title, setTitle] = useState(note.title || '');
   const [content, setContent] = useState(note.content || '');
-  const [isNewNote] = useState(!note.title);
+  const [localNote, setLocalNote] = useState(note);
   const clickTimeoutRef = useRef(null);
   const updateTimeoutRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const adjustTextareaHeight = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
+  // Update localNote when props change
+  useEffect(() => {
+    setLocalNote(note);
+  }, [note]);
+
+  const updateNote = async (updates) => {
+    try {
+      const updatedNote = {
+        ...localNote,
+        ...updates,
+        title,
+        order: note.order,
+        type: note.type
+      };
+
+      const response = await fetch(`http://localhost:5000/api/notes/${note._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedNote),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const savedNote = await response.json();
+      setLocalNote(savedNote);
+      
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error('Error updating note:', error);
     }
   };
 
-  useEffect(() => {
-    adjustTextareaHeight();
-  }, [content]);
+  const handleTitleChange = (e) => {
+    e.stopPropagation();
+    setTitle(e.target.value);
+  };
 
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current);
-        updateNote(content);
-      }
-    };
+  const handleTitleBlur = async () => {
+    setIsEditingTitle(false);
+    await updateNote({ title });
+  };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current);
-        updateNote(content);
-      }
-    };
-  }, [content]);
+  const handleContentChange = (e) => {
+    const newContent = e.target.value;
+    setContent(newContent);
+    
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+    
+    updateTimeoutRef.current = setTimeout(() => {
+      updateNote({ content: newContent });
+    }, 500);
+  };
+
+  const handleNoteUpdate = (updates) => {
+    setLocalNote(prev => ({ ...prev, ...updates }));
+    
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+    
+    updateTimeoutRef.current = setTimeout(() => {
+      updateNote(updates);
+    }, 500);
+  };
+
+  const handleHeaderClick = (e) => {
+    if (isEditingTitle) return;
+
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+      setIsEditingTitle(true);
+      return;
+    }
+
+    clickTimeoutRef.current = setTimeout(() => {
+      setIsExpanded(!isExpanded);
+      clickTimeoutRef.current = null;
+    }, 200);
+  };
+
+  const renderContent = () => {
+    if (note.type === 'task') {
+      return (
+        <div className="note-content">
+          <TaskNote note={localNote} onUpdate={handleNoteUpdate} />
+        </div>
+      );
+    }
+    
+    return (
+      <div className="note-content">
+        <textarea
+          ref={textareaRef}
+          value={content}
+          placeholder="Enter note content..."
+          onChange={handleContentChange}
+          className="content-textarea"
+        />
+      </div>
+    );
+  };
 
   useEffect(() => {
     return () => {
@@ -51,92 +133,15 @@ const Note = ({ note, onDelete, onUpdate }) => {
     };
   }, []);
 
-  const updateNote = async (contentToSave) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/notes/${note._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...note,
-          title,
-          content: contentToSave
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error updating note:', error);
-    }
-  };
-
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleTitleBlur = () => {
-    setIsEditingTitle(false);
-    
-    if (isNewNote && !title.trim()) {
-      onDelete(note._id);
-      return;
-    }
-    
-    if (title !== note.title) {
-      updateNote(content);
-    }
-  };
-
-  const handleContentChange = (e) => {
-    const newContent = e.target.value;
-    setContent(newContent);
-    
-    if (updateTimeoutRef.current) {
-      clearTimeout(updateTimeoutRef.current);
-    }
-    
-    updateTimeoutRef.current = setTimeout(() => {
-      updateNote(newContent);
-    }, 500);
-  };
-
-  const handleContentBlur = () => {
-    updateNote(content);
-  };
-
-  const handleHeaderClick = (e) => {
-    if (isEditingTitle) return;
-
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-      clickTimeoutRef.current = null;
-      return;
-    }
-
-    clickTimeoutRef.current = setTimeout(() => {
-      setIsExpanded(!isExpanded);
-      clickTimeoutRef.current = null;
-    }, 200);
-  };
-
-  const handleHeaderDoubleClick = (e) => {
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-      clickTimeoutRef.current = null;
-    }
-    
-    setIsEditingTitle(true);
-  };
-
   return (
-    <div className={`note ${isExpanded ? 'expanded' : ''}`}>
+    <div 
+      className={`note ${isExpanded ? 'expanded' : ''}`}
+      tabIndex={-1}  // This makes the div focusable
+    >
       <div 
         className={`note-header ${isEditingTitle ? 'editing' : ''}`}
         onClick={handleHeaderClick}
-        onDoubleClick={handleHeaderDoubleClick}
+        {...dragHandleProps}
       >
         {isEditingTitle ? (
           <input
@@ -162,18 +167,7 @@ const Note = ({ note, onDelete, onUpdate }) => {
         </button>
       </div>
       
-      {isExpanded && (
-        <div className="note-content">
-          <textarea
-            ref={textareaRef}
-            value={content}
-            placeholder="Enter note content..."
-            onChange={handleContentChange}
-            onBlur={handleContentBlur}
-            className="content-textarea"
-          />
-        </div>
-      )}
+      {isExpanded && renderContent()}
     </div>
   );
 };
