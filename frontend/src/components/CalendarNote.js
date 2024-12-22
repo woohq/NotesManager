@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import CalendarMonthView from './CalendarMonthView';
 import CalendarWeekView from './CalendarWeekView';
@@ -20,43 +20,6 @@ const CalendarNote = ({ note, onUpdate }) => {
     }];
   });
   const [calendarData, setCalendarData] = useState(note.calendarData || []);
-
-  const handleViewTypeChange = (viewId, newViewType) => {
-    const updatedViews = views.map(view => 
-      view.id === viewId ? { ...view, viewType: newViewType } : view
-    );
-    setViews(updatedViews);
-    onUpdate({ 
-      viewType: updatedViews[0].viewType,
-      views: updatedViews.map(v => ({
-        ...v,
-        selectedDate: v.selectedDate.toISOString() // Convert date to string for storage
-      }))
-    });
-  };
-
-  useEffect(() => {
-    // Convert stored date strings back to Date objects when note loads
-    if (note.views) {
-      setViews(note.views.map(view => ({
-        ...view,
-        selectedDate: new Date(view.selectedDate)
-      })));
-    }
-  }, [note.views]);
-
-  const handleDateSelect = (viewId, date) => {
-    const updatedViews = views.map(view =>
-      view.id === viewId ? { ...view, selectedDate: date } : view
-    );
-    setViews(updatedViews);
-    onUpdate({ 
-      views: updatedViews.map(v => ({
-        ...v,
-        selectedDate: v.selectedDate.toISOString()
-      }))
-    });
-  };
 
   const handleContentUpdate = (date, content) => {
     const newData = [...calendarData];
@@ -86,7 +49,35 @@ const CalendarNote = ({ note, onUpdate }) => {
     return entry ? entry.content : '';
   };
 
-  // Get the maximum order value
+  // Convert views for storage (Date objects to strings)
+  const prepareViewsForStorage = (viewsArray) => {
+    return viewsArray.map(v => ({
+      ...v,
+      selectedDate: v.selectedDate.toISOString()
+    }));
+  };
+
+  const handleViewTypeChange = (viewId, newViewType) => {
+    const updatedViews = views.map(view => 
+      view.id === viewId ? { ...view, viewType: newViewType } : view
+    );
+    setViews(updatedViews);
+    onUpdate({ 
+      viewType: updatedViews[0].viewType,
+      views: prepareViewsForStorage(updatedViews)
+    });
+  };
+
+  const handleDateSelect = (viewId, date) => {
+    const updatedViews = views.map(view =>
+      view.id === viewId ? { ...view, selectedDate: date } : view
+    );
+    setViews(updatedViews);
+    onUpdate({ 
+      views: prepareViewsForStorage(updatedViews)
+    });
+  };
+
   const addNewView = () => {
     const lastView = views[views.length - 1];
     const newId = `view-${views.length + 1}`;
@@ -100,10 +91,18 @@ const CalendarNote = ({ note, onUpdate }) => {
     
     setViews(updatedViews);
     onUpdate({ 
-      views: updatedViews.map(v => ({
-        ...v,
-        selectedDate: v.selectedDate.toISOString()
-      }))
+      views: prepareViewsForStorage(updatedViews)
+    });
+  };
+
+  const removeView = (viewId) => {
+    // Don't remove if it's the first view
+    if (viewId === views[0].id) return;
+    
+    const updatedViews = views.filter(view => view.id !== viewId);
+    setViews(updatedViews);
+    onUpdate({ 
+      views: prepareViewsForStorage(updatedViews)
     });
   };
 
@@ -122,10 +121,7 @@ const CalendarNote = ({ note, onUpdate }) => {
     });
     setViews(updatedViews);
     onUpdate({ 
-      views: updatedViews.map(v => ({
-        ...v,
-        selectedDate: v.selectedDate.toISOString()
-      }))
+      views: prepareViewsForStorage(updatedViews)
     });
   };
 
@@ -144,10 +140,7 @@ const CalendarNote = ({ note, onUpdate }) => {
     });
     setViews(updatedViews);
     onUpdate({ 
-      views: updatedViews.map(v => ({
-        ...v,
-        selectedDate: v.selectedDate.toISOString()
-      }))
+      views: prepareViewsForStorage(updatedViews)
     });
   };
 
@@ -168,21 +161,21 @@ const CalendarNote = ({ note, onUpdate }) => {
       const firstWeekday = firstDayOfMonth.getDay();
       const weekNumber = Math.ceil((weekStart.getDate() + firstWeekday) / 7);
       
-      return `W${weekNumber} < ${weekStart.toLocaleDateString('en-US', { 
+      return `W${weekNumber} ${weekStart.toLocaleDateString('en-US', { 
         month: 'short', 
         day: 'numeric' 
       })} - ${weekEnd.toLocaleDateString('en-US', { 
         month: 'short', 
         day: 'numeric',
         year: 'numeric'
-      })} >`;
+      })}`;
     }
   };
 
   return (
     <div className="calendar-note">
       <div className="space-y-6">
-        {views.map((view) => (
+        {views.map((view, index) => (
           <div key={view.id} className="calendar-view-container border rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
               <div className="flex space-x-2">
@@ -208,22 +201,32 @@ const CalendarNote = ({ note, onUpdate }) => {
                 </button>
               </div>
 
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => navigatePrevious(view.id)}
-                  className="p-1 rounded hover:bg-gray-100"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <span className="font-medium">
-                  {getCurrentPeriodLabel(view)}
-                </span>
-                <button
-                  onClick={() => navigateNext(view.id)}
-                  className="p-1 rounded hover:bg-gray-100"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
+              <div className="flex items-center">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => navigatePrevious(view.id)}
+                    className="p-1 rounded hover:bg-gray-100"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <span className="font-medium">
+                    {getCurrentPeriodLabel(view)}
+                  </span>
+                  <button
+                    onClick={() => navigateNext(view.id)}
+                    className="p-1 rounded hover:bg-gray-100"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+                {index > 0 && (
+                  <button 
+                    onClick={() => removeView(view.id)}
+                    className="ml-4 px-2 text-xl leading-none text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
             </div>
 
