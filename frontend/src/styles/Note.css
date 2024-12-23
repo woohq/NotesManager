@@ -77,6 +77,7 @@
 
 .title-input:focus {
   background: transparent;
+  outline: none;
 }
 
 .title-input::placeholder {
@@ -121,11 +122,11 @@
   background: transparent;
   resize: none;
   overflow: hidden;
-  outline: none;
 }
 
 .content-textarea:focus {
   background: transparent;
+  outline: none;
 }
 
 .content-textarea::placeholder {
@@ -171,6 +172,7 @@
 
 .task-input:focus {
   outline: none;
+  box-shadow: 0 1px 0 0 #3b82f6;
 }
 
 .task-delete {
@@ -232,22 +234,6 @@
 /* Focus states */
 .note:focus-within {
   border-color: #e2e4e9;
-}
-
-/* Remove default focus outlines */
-.title-input:focus,
-.content-textarea:focus,
-.task-input:focus {
-  outline: none;
-  background: transparent;
-}
-
-/* Remove default focus ring from Chrome */
-.title-input:focus-visible,
-.content-textarea:focus-visible,
-.task-input:focus-visible {
-  outline: none;
-  -webkit-appearance: none;
 }
 
 /* Empty state */

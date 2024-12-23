@@ -1,52 +1,96 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
-from pymongo import MongoClient
-from config import Config
+from pymongo import MongoClient, ASCENDING, DESCENDING
 import logging
+from datetime import datetime
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+def create_indexes(db):
+    """Create necessary indexes for the application"""
+    try:
+        # Notes collection indexes
+        db.notes.create_index([
+            ("cabinet_id", ASCENDING),
+            ("order", ASCENDING)
+        ])
+        
+        # Cabinets collection indexes
+        db.cabinets.create_index("name", unique=True)
+        db.cabinets.create_index("created_at")
+        
+        logging.info("Database indexes created successfully")
+    except Exception as e:
+        logging.error(f"Error creating indexes: {str(e)}")
+        raise
 
-def create_app(config_class=Config):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
+def ensure_default_cabinet(db):
+    """Ensure a default cabinet exists"""
+    try:
+        default_cabinet = db.cabinets.find_one({"name": "Default Cabinet"})
+        if not default_cabinet:
+            now = datetime.utcnow()
+            result = db.cabinets.insert_one({
+                "name": "Default Cabinet",
+                "created_at": now,
+                "updated_at": now
+            })
+            default_cabinet_id = str(result.inserted_id)
+            logging.info("Default cabinet created successfully")
+            
+            # Update any existing notes without cabinet_id
+            db.notes.update_many(
+                {"cabinet_id": {"$exists": False}},
+                {"$set": {"cabinet_id": default_cabinet_id}}
+            )
+        else:
+            default_cabinet_id = str(default_cabinet["_id"])
+            logging.info("Default cabinet already exists")
+            
+        return default_cabinet_id
+    except Exception as e:
+        logging.error(f"Error ensuring default cabinet: {str(e)}")
+        raise
+
+def create_app(test_config=None):
+    """Create and configure the Flask application"""
+    app = Flask(__name__, instance_relative_config=True)
     
-    # Configure CORS with more specific settings
+    # Load configuration
+    if test_config is None:
+        app.config.from_object('config.Config')
+    else:
+        app.config.update(test_config)
+    
+    # Setup CORS - Simplified configuration
     CORS(app, resources={
         r"/api/*": {
-            "origins": ["http://localhost:3000"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type"]
+            "origins": app.config['CORS_ORIGINS']
         }
     })
     
+    # Setup logging
+    logging.basicConfig(level=logging.INFO)
+    
     # Initialize MongoDB connection
     try:
-        logger.debug("Attempting to connect to MongoDB...")
         client = MongoClient(app.config['MONGO_URI'])
-        # Test the connection
-        client.admin.command('ping')
-        app.db = client.notes_manager
-        logger.debug("Successfully connected to MongoDB!")
+        db = client.get_database()
+        app.db = db
+        
+        # Create indexes
+        create_indexes(db)
+        
+        # Ensure default cabinet exists
+        default_cabinet_id = ensure_default_cabinet(db)
+        app.config['DEFAULT_CABINET_ID'] = default_cabinet_id
+        
+        logging.info("Database connection established successfully")
     except Exception as e:
-        logger.error(f"Failed to connect to MongoDB: {str(e)}")
-        app.db = None
-
+        logging.error(f"Error connecting to database: {str(e)}")
+        raise
+    
     # Register blueprints
-    from app.routes import notes, cabinets
+    from .routes import notes, cabinets
     app.register_blueprint(notes.bp)
     app.register_blueprint(cabinets.bp)
     
-    @app.after_request
-    def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-        return response
-
-    @app.route('/health')
-    def health_check():
-        status = 'healthy' if app.db else 'database disconnected'
-        return jsonify({'status': status})
-
     return app

@@ -74,37 +74,25 @@ body {
   background-color: #f8f9fa;
 }
 
-/* Add button */
-.add-note-button {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  background-color: #3b82f6;
-  color: white;
-  cursor: pointer;
-  display: flex;
+/* Button styling for add actions */
+.add-action-button {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: 400;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: #666;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
-  z-index: 100;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.add-note-button:hover {
-  background-color: #2563eb;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
-  transform: translateY(-1px);
-}
-
-.add-note-button:active {
-  transform: translateY(1px);
+.add-action-button:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
 }
 
 /* Empty state */
@@ -138,7 +126,13 @@ body {
 
 /* Dropdown menu styling */
 [data-radix-popper-content-wrapper] {
-  z-index: 200 !important;
+  z-index: 50;
+}
+
+/* Make sure note titles are always above dropdowns when editing */
+.note-header.editing {
+  z-index: 100;
+  position: relative;
 }
 
 /* Responsive adjustments */
@@ -150,10 +144,5 @@ body {
 
   .app-container {
     padding: 0;
-  }
-
-  .add-note-button {
-    right: 16px;
-    bottom: 16px;
   }
 }

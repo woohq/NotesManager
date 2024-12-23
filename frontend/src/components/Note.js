@@ -2,18 +2,28 @@ import React, { useState, useRef, useEffect } from 'react';
 import TaskNote from './TaskNote';
 import CalendarNote from './CalendarNote';
 
-const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
-  // Start expanded for calendar notes
+const Note = ({ note, onDelete, dragHandleProps }) => {
   const [isExpanded, setIsExpanded] = useState(note.type === 'calendar' ? true : !note.title);
   const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
   const [title, setTitle] = useState(note.title || '');
   const [content, setContent] = useState(note.content || '');
   const [localNote, setLocalNote] = useState(note);
+  
+  const titleInputRef = useRef(null);
   const clickTimeoutRef = useRef(null);
   const updateTimeoutRef = useRef(null);
   const textareaRef = useRef(null);
+  const isInitialMount = useRef(true);
 
-  // Update localNote when props change
+  useEffect(() => {
+    if (isInitialMount.current && !note.title) {
+      if (titleInputRef.current) {
+        titleInputRef.current.focus();
+        isInitialMount.current = false;
+      }
+    }
+  }, [note.title]);
+
   useEffect(() => {
     setLocalNote(note);
     setContent(note.content || '');
@@ -30,7 +40,6 @@ const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
         type: note.type,
       };
 
-      // For calendar notes, make sure to preserve views
       if (note.type === 'calendar' && !updates.views && localNote.views) {
         updatedNote.views = localNote.views;
       }
@@ -49,10 +58,6 @@ const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
 
       const savedNote = await response.json();
       setLocalNote(savedNote);
-      
-      if (onUpdate) {
-        onUpdate();
-      }
     } catch (error) {
       console.error('Error updating note:', error);
     }
@@ -151,7 +156,7 @@ const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
   return (
     <div 
       className={`note ${isExpanded ? 'expanded' : ''}`}
-      tabIndex={-1}  // This makes the div focusable
+      tabIndex={-1}
     >
       <div 
         className={`note-header ${isEditingTitle ? 'editing' : ''}`}
@@ -160,12 +165,12 @@ const Note = ({ note, onDelete, onUpdate, dragHandleProps }) => {
       >
         {isEditingTitle ? (
           <input
+            ref={titleInputRef}
             className="title-input"
             value={title}
             placeholder="Enter title..."
             onChange={handleTitleChange}
             onBlur={handleTitleBlur}
-            autoFocus
             onClick={(e) => e.stopPropagation()}
           />
         ) : (

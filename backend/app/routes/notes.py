@@ -9,14 +9,22 @@ bp = Blueprint('notes', __name__, url_prefix='/api/notes')
 
 @bp.route('', methods=['GET'])
 def get_notes():
-    """Get all notes"""
+    """Get all notes, optionally filtered by cabinet"""
     logger.debug("GET /api/notes endpoint called")
     try:
         if not hasattr(current_app, 'db'):
             logger.error("Database not initialized")
             return jsonify({'error': 'Database not initialized'}), 500
             
-        notes = list(current_app.db.notes.find().sort('order', 1))
+        # Get cabinet_id from query parameters
+        cabinet_id = request.args.get('cabinet_id')
+        
+        # Build query
+        query = {}
+        if cabinet_id:
+            query['cabinet_id'] = cabinet_id
+            
+        notes = list(current_app.db.notes.find(query).sort('order', 1))
         
         # Convert ObjectId to string for JSON serialization
         for note in notes:
@@ -42,30 +50,41 @@ def create_note():
         
         if not note_data:
             return jsonify({'error': 'No data provided'}), 400
+            
+        # Validate cabinet_id
+        cabinet_id = note_data.get('cabinet_id')
+        if not cabinet_id:
+            return jsonify({'error': 'cabinet_id is required'}), 400
+            
+        # Verify cabinet exists
+        cabinet = current_app.db.cabinets.find_one({'_id': ObjectId(cabinet_id)})
+        if not cabinet:
+            return jsonify({'error': 'Cabinet not found'}), 404
 
         # Initialize based on note type
         note_type = note_data.get('type', 'standard')
         if note_type == 'task':
-            note_data.setdefault('tasks', [])  # Initialize empty tasks list if not provided
-            note_data.setdefault('content', '')  # Set empty content for task notes
+            note_data.setdefault('tasks', [])
+            note_data.setdefault('content', '')
         elif note_type == 'calendar':
-            note_data.setdefault('viewType', 'month')  # Default to month view
-            note_data.setdefault('calendarData', [])   # Initialize empty calendar data array
-            note_data.setdefault('views', [{          # Initialize with default view
+            note_data.setdefault('viewType', 'month')
+            note_data.setdefault('calendarData', [])
+            note_data.setdefault('views', [{
                 'id': 'view-1',
                 'viewType': 'month',
                 'selectedDate': note_data.get('timestamp')
             }])
-            note_data.setdefault('content', '')        # Set empty content for general note content
+            note_data.setdefault('content', '')
         else:
-            note_data.setdefault('content', '')  # Set empty content for standard notes
+            note_data.setdefault('content', '')
 
         # Common fields
         note_data.setdefault('title', '')
         note_data.setdefault('timestamp', '')
         
-        # Get the maximum order value
+        # Get the maximum order value for the specific cabinet
         last_note = current_app.db.notes.find_one(
+            {'cabinet_id': cabinet_id},
             sort=[("order", -1)]
         )
         note_data['order'] = (last_note['order'] + 1000 if last_note else 0)
@@ -94,10 +113,16 @@ def update_note(note_id):
         if not note_data:
             return jsonify({'error': 'No data provided'}), 400
 
+        # Get existing note to verify cabinet_id
+        existing_note = current_app.db.notes.find_one({'_id': ObjectId(note_id)})
+        if not existing_note:
+            return jsonify({'error': 'Note not found'}), 404
+
         update_data = {
             'title': note_data.get('title', ''),
             'order': note_data.get('order'),
-            'type': note_data.get('type', 'standard')
+            'type': note_data.get('type', 'standard'),
+            'cabinet_id': existing_note['cabinet_id']  # Preserve cabinet_id
         }
 
         # Handle content based on note type
