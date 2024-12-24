@@ -33,22 +33,15 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
       setName('');
       onOpenChange(false);
     } catch (err) {
+      console.error('Error creating cabinet:', err);
       setError(err.message || 'Failed to create cabinet');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleOpenChange = (open) => {
-    if (!open) {
-      setName('');
-      setError('');
-    }
-    onOpenChange(open);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -115,23 +108,17 @@ export const DeleteCabinetDialog = ({
       await onConfirm();
       onOpenChange(false);
     } catch (err) {
+      console.error('Error deleting cabinet:', err);
       setError(err.message || 'Failed to delete cabinet');
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const handleOpenChange = (open) => {
-    if (!open) {
-      setError('');
-    }
-    onOpenChange(open);
-  };
-
   if (!cabinet) return null;
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Delete Cabinet</DialogTitle>

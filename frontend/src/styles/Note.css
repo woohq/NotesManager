@@ -112,7 +112,7 @@
 
 .content-textarea {
   width: 100%;
-  min-height: 20px;
+  min-height: 100px;
   padding: 0;
   border: none;
   font-family: inherit;
@@ -124,95 +124,57 @@
   overflow: hidden;
 }
 
-.content-textarea:focus {
-  background: transparent;
-  outline: none;
-}
-
-.content-textarea::placeholder {
-  color: #9ca3af;
-}
-
-/* Task note specific styling */
-.task-note {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.task-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background-color: white;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.task-item:hover,
-.task-item:focus-within {
-  background-color: #f9fafb;
-}
-
-.task-checkbox {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-.task-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 4px;
+/* TipTap Editor Styles */
+.ProseMirror {
+  height: 100%;
+  min-height: inherit;
+  font-family: inherit;
   font-size: 0.9375rem;
+  line-height: 1.5;
   color: #4b5563;
 }
 
-.task-input:focus {
+.ProseMirror:focus {
   outline: none;
-  box-shadow: 0 1px 0 0 #3b82f6;
+  background-color: transparent;
 }
 
-.task-delete {
-  padding: 4px 8px;
-  background: transparent;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 1.25rem;
-  line-height: 1;
-  transition: all 0.2s ease;
+.ProseMirror p {
+  margin: 0;
+  padding: 0;
 }
 
-.task-delete:hover {
-  color: #ef4444;
-  background-color: #fee2e2;
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
 }
 
-.task-item.completed .task-input {
-  text-decoration: line-through;
-  color: #9ca3af;
-}
-
-.add-task {
-  margin-top: 8px;
-  padding: 8px;
-  background-color: #f9fafb;
-  border: 1px dashed #e5e7eb;
-  border-radius: 4px;
+.ProseMirror blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding-left: 1em;
+  margin: 0.5em 0;
   color: #6b7280;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
 }
 
-.add-task:hover {
+.ProseMirror code {
   background-color: #f3f4f6;
-  border-color: #d1d5db;
-  color: #374151;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.ProseMirror pre {
+  background-color: #f3f4f6;
+  padding: 0.75em 1em;
+  border-radius: 6px;
+  font-family: monospace;
+  margin: 0.5em 0;
+}
+
+.ProseMirror pre code {
+  background-color: transparent;
+  padding: 0;
 }
 
 /* Expansion animation */

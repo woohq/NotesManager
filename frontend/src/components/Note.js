@@ -1,18 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import TaskNote from './TaskNote';
 import CalendarNote from './CalendarNote';
+import RichTextEditor from './ui/RichTextEditor';
+import { useEditor } from './EditorContext';
+import { sanitizeContent, cleanContent } from '@/lib/sanitize';
 
 const Note = ({ note, onDelete, dragHandleProps }) => {
   const [isExpanded, setIsExpanded] = useState(note.type === 'calendar' ? true : !note.title);
   const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
   const [title, setTitle] = useState(note.title || '');
-  const [content, setContent] = useState(note.content || '');
+  const [content, setContent] = useState(cleanContent(note.content) || '');
   const [localNote, setLocalNote] = useState(note);
-  
+
+  const { setEditor } = useEditor();
   const titleInputRef = useRef(null);
   const clickTimeoutRef = useRef(null);
   const updateTimeoutRef = useRef(null);
-  const textareaRef = useRef(null);
   const isInitialMount = useRef(true);
 
   useEffect(() => {
@@ -26,7 +29,7 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
 
   useEffect(() => {
     setLocalNote(note);
-    setContent(note.content || '');
+    setContent(cleanContent(note.content) || '');
     setTitle(note.title || '');
   }, [note]);
 
@@ -47,6 +50,7 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
       const response = await fetch(`http://localhost:5000/api/notes/${note._id}`, {
         method: 'PUT',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedNote),
@@ -73,26 +77,35 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
     await updateNote({ title });
   };
 
-  const handleContentChange = (e) => {
-    const newContent = e.target.value;
-    setContent(newContent);
-    
+  const handleContentChange = (newContent) => {
+    const sanitizedContent = sanitizeContent(newContent);
+    setContent(sanitizedContent);
+
     if (updateTimeoutRef.current) {
       clearTimeout(updateTimeoutRef.current);
     }
-    
+
     updateTimeoutRef.current = setTimeout(() => {
-      updateNote({ content: newContent });
+      updateNote({ content: sanitizedContent });
     }, 500);
+  };
+
+  const handleEditorReady = (editor) => {
+    editor.on('focus', () => {
+      setEditor(editor);
+    });
+    editor.on('blur', () => {
+      setEditor(null);
+    });
   };
 
   const handleNoteUpdate = (updates) => {
     setLocalNote(prev => ({ ...prev, ...updates }));
-    
+
     if (updateTimeoutRef.current) {
       clearTimeout(updateTimeoutRef.current);
     }
-    
+
     updateTimeoutRef.current = setTimeout(() => {
       updateNote(updates);
     }, 500);
@@ -105,6 +118,11 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
       clearTimeout(clickTimeoutRef.current);
       clickTimeoutRef.current = null;
       setIsEditingTitle(true);
+      setTimeout(() => {
+        if (titleInputRef.current) {
+          titleInputRef.current.focus();
+        }
+      }, 0);
       return;
     }
 
@@ -128,14 +146,13 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
         </div>
       );
     }
-    
+
     return (
       <div className="note-content">
-        <textarea
-          ref={textareaRef}
-          value={content}
-          placeholder="Enter note content..."
+        <RichTextEditor
+          content={content}
           onChange={handleContentChange}
+          onEditorReady={handleEditorReady}
           className="content-textarea"
         />
       </div>
@@ -154,11 +171,11 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
   }, []);
 
   return (
-    <div 
+    <div
       className={`note ${isExpanded ? 'expanded' : ''}`}
       tabIndex={-1}
     >
-      <div 
+      <div
         className={`note-header ${isEditingTitle ? 'editing' : ''}`}
         onClick={handleHeaderClick}
         {...dragHandleProps}
@@ -176,7 +193,7 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
         ) : (
           <div className="title-display">{title || 'Untitled'}</div>
         )}
-        <button 
+        <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete(note._id);
@@ -186,7 +203,7 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
           ×
         </button>
       </div>
-      
+
       {isExpanded && renderContent()}
     </div>
   );

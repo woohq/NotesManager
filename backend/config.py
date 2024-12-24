@@ -11,5 +11,8 @@ class Config:
     # Flask settings
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')
     
-    # CORS settings - Simplified for development
-    CORS_ORIGINS = ['http://localhost:3000']
+    # Basic server settings
+    DEBUG = True
+    
+    # CORS settings simplified
+    CORS_HEADERS = ['Content-Type', 'Authorization']

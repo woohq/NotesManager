@@ -1,11 +1,44 @@
 from flask import Blueprint, request, jsonify, current_app
 from bson.objectid import ObjectId
 import logging
+import bleach
+from bs4 import BeautifulSoup
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('notes', __name__, url_prefix='/api/notes')
+
+def sanitize_html(content):
+    if not content:
+        return ''
+        
+    # Define allowed tags and attributes
+    allowed_tags = [
+        'p', 'div', 'span',
+        'h1', 'h2', 'h3',
+        'strong', 'em', 'u', 's',
+        'ul', 'ol', 'li',
+        'pre', 'code',
+        'blockquote', 'a',
+        'input'
+    ]
+    
+    allowed_attributes = {
+        '*': ['class', 'style', 'data-type'],
+        'a': ['href'],
+        'input': ['type', 'checked']
+    }
+    
+    # Clean the HTML
+    cleaned_html = bleach.clean(
+        content,
+        tags=allowed_tags,
+        attributes=allowed_attributes,
+        strip=True
+    )
+    
+    return cleaned_html
 
 @bp.route('', methods=['GET'])
 def get_notes():
@@ -60,6 +93,10 @@ def create_note():
         cabinet = current_app.db.cabinets.find_one({'_id': ObjectId(cabinet_id)})
         if not cabinet:
             return jsonify({'error': 'Cabinet not found'}), 404
+
+        # Sanitize HTML content if present
+        if 'content' in note_data:
+            note_data['content'] = sanitize_html(note_data['content'])
 
         # Initialize based on note type
         note_type = note_data.get('type', 'standard')
@@ -125,7 +162,7 @@ def update_note(note_id):
             'cabinet_id': existing_note['cabinet_id']  # Preserve cabinet_id
         }
 
-        # Handle content based on note type
+        # Handle content based on note type and sanitize if necessary
         if update_data['type'] == 'task':
             update_data['tasks'] = note_data.get('tasks', [])
         elif update_data['type'] == 'calendar':
@@ -133,7 +170,7 @@ def update_note(note_id):
             update_data['calendarData'] = note_data.get('calendarData', [])
             update_data['views'] = note_data.get('views', [])
         else:
-            update_data['content'] = note_data.get('content', '')
+            update_data['content'] = sanitize_html(note_data.get('content', ''))
         
         result = current_app.db.notes.update_one(
             {'_id': ObjectId(note_id)},

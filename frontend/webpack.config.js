@@ -67,15 +67,7 @@ module.exports = {
     port: 3000,
     hot: true,
     historyApiFallback: true,
-    open: true,
-    proxy: [
-      {
-        context: ['/api'],
-        target: 'http://localhost:5000',
-        secure: false,
-        changeOrigin: true
-      }
-    ]
+    open: true
   },
   devtool: 'source-map',
   mode: 'development',

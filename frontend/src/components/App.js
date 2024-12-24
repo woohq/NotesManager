@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Note from './Note';
 import CabinetHeader from './cabinets/CabinetHeader';
+import FloatingToolbar from './ui/FloatingToolbar';
+import { EditorProvider } from './EditorContext';
 import '../styles/App.css';
 import '../styles/Note.css';
-
-const API_URL = 'http://localhost:5000';
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -19,7 +19,18 @@ function App() {
 
   const loadCabinets = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/cabinets`);
+      const response = await fetch('http://localhost:5000/api/cabinets', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       setCabinets(data);
 
@@ -36,7 +47,18 @@ function App() {
 
   const loadNotes = async (cabinetId) => {
     try {
-      const response = await fetch(`${API_URL}/api/notes?cabinet_id=${cabinetId}`);
+      const response = await fetch(`http://localhost:5000/api/notes?cabinet_id=${cabinetId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       setNotes(data);
     } catch (error) {
@@ -52,11 +74,19 @@ function App() {
 
   const handleCabinetCreate = async (name) => {
     try {
-      const response = await fetch(`${API_URL}/api/cabinets`, {
+      const response = await fetch('http://localhost:5000/api/cabinets', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ name })
       });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create cabinet: ${response.status}`);
+      }
+
       const newCabinet = await response.json();
       setCabinets([...cabinets, newCabinet]);
       await handleCabinetChange(newCabinet);
@@ -68,7 +98,18 @@ function App() {
 
   const handleCabinetDelete = async (cabinetId) => {
     try {
-      await fetch(`${API_URL}/api/cabinets/${cabinetId}`, { method: 'DELETE' });
+      const response = await fetch(`http://localhost:5000/api/cabinets/${cabinetId}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete cabinet: ${response.status}`);
+      }
+
       setCabinets(cabinets.filter(c => c._id !== cabinetId));
       
       if (currentCabinet._id === cabinetId) {
@@ -100,11 +141,18 @@ function App() {
         } : {})
       };
 
-      const response = await fetch(`${API_URL}/api/notes`, {
+      const response = await fetch('http://localhost:5000/api/notes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(noteData)
       });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create note: ${response.status}`);
+      }
 
       const newNote = await response.json();
       setNotes([...notes, newNote]);
@@ -115,7 +163,18 @@ function App() {
 
   const deleteNote = async (noteId) => {
     try {
-      await fetch(`${API_URL}/api/notes/${noteId}`, { method: 'DELETE' });
+      const response = await fetch(`http://localhost:5000/api/notes/${noteId}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete note: ${response.status}`);
+      }
+
       setNotes(notes.filter(note => note._id !== noteId));
     } catch (error) {
       console.error('Error deleting note:', error);
@@ -136,9 +195,12 @@ function App() {
 
     try {
       await Promise.all(updatedNotes.map(note => 
-        fetch(`${API_URL}/api/notes/${note._id}`, {
+        fetch(`http://localhost:5000/api/notes/${note._id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({
             ...note,
             cabinet_id: currentCabinet._id
@@ -154,56 +216,59 @@ function App() {
   if (!currentCabinet) return null;
 
   return (
-    <div className="app-container">
-      <div className="content-wrapper" ref={contentWrapperRef}>
-        <CabinetHeader
-          cabinets={cabinets}
-          currentCabinet={currentCabinet}
-          onCabinetChange={handleCabinetChange}
-          onCabinetCreate={handleCabinetCreate}
-          onCabinetDelete={handleCabinetDelete}
-          onCreateNote={createNote}
-        />
-        
-        <DragDropContext onDragEnd={(result) => {
-          if (!result.destination) return;
-          if (result.destination.index === result.source.index) return;
-          reorderNotes(result.source.index, result.destination.index);
-        }}>
-          <Droppable droppableId="droppable">
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="notes-container"
-              >
-                {notes.map((note, index) => (
-                  <Draggable
-                    key={note._id}
-                    draggableId={note._id}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                      >
-                        <Note
-                          note={note}
-                          onDelete={deleteNote}
-                          dragHandleProps={provided.dragHandleProps}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+    <EditorProvider>
+      <div className="app-container">
+        <FloatingToolbar />
+        <div className="content-wrapper" ref={contentWrapperRef}>
+          <CabinetHeader
+            cabinets={cabinets}
+            currentCabinet={currentCabinet}
+            onCabinetChange={handleCabinetChange}
+            onCabinetCreate={handleCabinetCreate}
+            onCabinetDelete={handleCabinetDelete}
+            onCreateNote={createNote}
+          />
+          
+          <DragDropContext onDragEnd={(result) => {
+            if (!result.destination) return;
+            if (result.destination.index === result.source.index) return;
+            reorderNotes(result.source.index, result.destination.index);
+          }}>
+            <Droppable droppableId="droppable">
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="notes-container"
+                >
+                  {notes.map((note, index) => (
+                    <Draggable
+                      key={note._id}
+                      draggableId={note._id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                        >
+                          <Note
+                            note={note}
+                            onDelete={deleteNote}
+                            dragHandleProps={provided.dragHandleProps}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </div>
       </div>
-    </div>
+    </EditorProvider>
   );
 }
 

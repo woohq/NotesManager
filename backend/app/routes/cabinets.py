@@ -32,6 +32,7 @@ def create_cabinet():
         cabinet_data = request.json
         
         if not cabinet_data or 'name' not in cabinet_data:
+            logger.error("Cabinet name is required")
             return jsonify({'error': 'Cabinet name is required'}), 400
             
         # Add timestamps
@@ -42,6 +43,7 @@ def create_cabinet():
         # Check for duplicate names
         existing = current_app.db.cabinets.find_one({'name': cabinet_data['name']})
         if existing:
+            logger.error("Cabinet name already exists")
             return jsonify({'error': 'A cabinet with this name already exists'}), 409
             
         result = current_app.db.cabinets.insert_one(cabinet_data)
@@ -49,6 +51,7 @@ def create_cabinet():
         # Get the created cabinet
         new_cabinet = current_app.db.cabinets.find_one({'_id': result.inserted_id})
         new_cabinet['_id'] = str(new_cabinet['_id'])
+        logger.debug(f"Created new cabinet: {new_cabinet}")
         
         return jsonify(new_cabinet), 201
     except Exception as e:
@@ -63,6 +66,7 @@ def get_cabinet(cabinet_id):
         cabinet = current_app.db.cabinets.find_one({'_id': ObjectId(cabinet_id)})
         
         if not cabinet:
+            logger.error(f"Cabinet not found: {cabinet_id}")
             return jsonify({'error': 'Cabinet not found'}), 404
             
         cabinet['_id'] = str(cabinet['_id'])
@@ -79,6 +83,7 @@ def update_cabinet(cabinet_id):
         cabinet_data = request.json
         
         if not cabinet_data or 'name' not in cabinet_data:
+            logger.error("Cabinet name is required")
             return jsonify({'error': 'Cabinet name is required'}), 400
             
         # Check for duplicate names excluding current cabinet
@@ -87,6 +92,7 @@ def update_cabinet(cabinet_id):
             'name': cabinet_data['name']
         })
         if existing:
+            logger.error("Cabinet name already exists")
             return jsonify({'error': 'A cabinet with this name already exists'}), 409
             
         # Update timestamp
@@ -98,11 +104,13 @@ def update_cabinet(cabinet_id):
         )
         
         if result.matched_count == 0:
+            logger.error(f"Cabinet not found: {cabinet_id}")
             return jsonify({'error': 'Cabinet not found'}), 404
             
         # Get updated cabinet
         updated_cabinet = current_app.db.cabinets.find_one({'_id': ObjectId(cabinet_id)})
         updated_cabinet['_id'] = str(updated_cabinet['_id'])
+        logger.debug(f"Updated cabinet: {updated_cabinet}")
         
         return jsonify(updated_cabinet)
     except Exception as e:
@@ -117,6 +125,7 @@ def delete_cabinet(cabinet_id):
         # Check if cabinet exists
         cabinet = current_app.db.cabinets.find_one({'_id': ObjectId(cabinet_id)})
         if not cabinet:
+            logger.error(f"Cabinet not found: {cabinet_id}")
             return jsonify({'error': 'Cabinet not found'}), 404
             
         # Delete all notes in the cabinet
@@ -126,8 +135,10 @@ def delete_cabinet(cabinet_id):
         result = current_app.db.cabinets.delete_one({'_id': ObjectId(cabinet_id)})
         
         if result.deleted_count == 0:
+            logger.error(f"Cabinet not found: {cabinet_id}")
             return jsonify({'error': 'Cabinet not found'}), 404
-            
+        
+        logger.debug(f"Deleted cabinet and associated notes: {cabinet_id}")    
         return jsonify({'message': 'Cabinet and associated notes deleted successfully'})
     except Exception as e:
         logger.error(f"Error deleting cabinet: {str(e)}")
@@ -141,6 +152,7 @@ def get_cabinet_notes(cabinet_id):
         # Verify cabinet exists
         cabinet = current_app.db.cabinets.find_one({'_id': ObjectId(cabinet_id)})
         if not cabinet:
+            logger.error(f"Cabinet not found: {cabinet_id}")
             return jsonify({'error': 'Cabinet not found'}), 404
             
         notes = list(current_app.db.notes.find(
