@@ -15,7 +15,8 @@ const CabinetHeader = ({
   onCabinetChange,
   onCabinetCreate,
   onCabinetDelete,
-  onCreateNote 
+  onCreateNote,
+  isCreateDisabled 
 }) => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -23,30 +24,45 @@ const CabinetHeader = ({
   const [isAddNoteOpen, setIsAddNoteOpen] = useState(false);
 
   const handleCabinetCreate = async (name) => {
-    await onCabinetCreate(name);
-    setIsCreateDialogOpen(false);
+    try {
+      const newCabinet = await onCabinetCreate(name);
+      setIsCreateDialogOpen(false);
+      return newCabinet;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const handleDeleteClick = (cabinet) => {
+  const handleDeleteClick = (cabinet, e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setCabinetToDelete(cabinet);
     setIsDeleteDialogOpen(true);
   };
 
   const handleCabinetDelete = async () => {
     if (cabinetToDelete) {
-      await onCabinetDelete(cabinetToDelete._id);
-      setIsDeleteDialogOpen(false);
-      setCabinetToDelete(null);
+      try {
+        await onCabinetDelete(cabinetToDelete._id);
+        setIsDeleteDialogOpen(false);
+        setCabinetToDelete(null);
+      } catch (error) {
+        throw error;
+      }
     }
+  };
+
+  const handleCabinetSelect = (cabinet) => {
+    onCabinetChange(cabinet);
   };
 
   return (
     <div className="cabinet-header">
       <div className="flex items-center gap-4">
         {/* Cabinet Selector */}
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-100 rounded-md transition-colors focus:outline-none">
-            {currentCabinet?.name || 'Select Cabinet'}
+            {cabinets.length === 0 ? 'Click Here to Create a Cabinet' : (currentCabinet?.name || 'Select Cabinet')}
             <ChevronDown className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
@@ -54,32 +70,25 @@ const CabinetHeader = ({
               <DropdownMenuItem
                 key={cabinet._id}
                 className="flex items-center justify-between group"
-                onSelect={(e) => {
-                  if (e.target.closest('.delete-button')) {
-                    e.preventDefault();
-                    return;
-                  }
-                  onCabinetChange(cabinet);
-                }}
+                onClick={() => handleCabinetSelect(cabinet)}
               >
                 <span>{cabinet.name}</span>
-                {cabinet.name !== 'Default Cabinet' && (
-                  <button
-                    className="delete-button opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-opacity"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteClick(cabinet);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </button>
-                )}
+                <button
+                  className="delete-button opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-opacity"
+                  onClick={(e) => handleDeleteClick(cabinet, e)}
+                >
+                  <Trash2 className="h-4 w-4 text-red-500" />
+                </button>
               </DropdownMenuItem>
             ))}
-            <DropdownMenuSeparator />
+            {cabinets.length > 0 && <DropdownMenuSeparator />}
             <DropdownMenuItem
               className="flex items-center gap-2 text-blue-600"
-              onSelect={() => setIsCreateDialogOpen(true)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsCreateDialogOpen(true);
+              }}
             >
               <Plus className="h-4 w-4" />
               <span>New Cabinet</span>
@@ -89,42 +98,50 @@ const CabinetHeader = ({
 
         {/* Add Note Dropdown */}
         <DropdownMenu open={isAddNoteOpen} onOpenChange={setIsAddNoteOpen}>
-          <DropdownMenuTrigger className="px-3 py-2 bg-[#f9fafb] border border-[#e5e7eb] rounded text-[#6b7280] cursor-pointer text-sm transition-all hover:bg-[#f3f4f6] hover:border-[#d1d5db] hover:text-[#374151] flex items-center gap-2 focus:outline-none">
-            <Plus className="h-4 w-4" />
+          <DropdownMenuTrigger 
+            className={`px-3 py-2 bg-[#f9fafb] border border-[#e5e7eb] rounded text-[#6b7280] transition-all 
+              ${isCreateDisabled || cabinets.length === 0 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'cursor-pointer hover:bg-[#f3f4f6] hover:border-[#d1d5db] hover:text-[#374151]'}`}
+            disabled={isCreateDisabled || cabinets.length === 0}
+          >
+            <Plus className="h-4 w-4 inline-block mr-2" />
             Add Note
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
-            <DropdownMenuItem
-              onClick={() => {
-                onCreateNote('standard');
-                setIsAddNoteOpen(false);
-              }}
-              className="flex items-center gap-2 px-2 py-1.5"
-            >
-              <StickyNote className="h-4 w-4" />
-              <span>Standard Note</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                onCreateNote('task');
-                setIsAddNoteOpen(false);
-              }}
-              className="flex items-center gap-2 px-2 py-1.5"
-            >
-              <ListTodo className="h-4 w-4" />
-              <span>Task List</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                onCreateNote('calendar');
-                setIsAddNoteOpen(false);
-              }}
-              className="flex items-center gap-2 px-2 py-1.5"
-            >
-              <Calendar className="h-4 w-4" />
-              <span>Calendar Note</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
+          {!isCreateDisabled && (
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem
+                onClick={() => {
+                  onCreateNote('standard');
+                  setIsAddNoteOpen(false);
+                }}
+                className="flex items-center gap-2 px-2 py-1.5"
+              >
+                <StickyNote className="h-4 w-4" />
+                <span>Standard Note</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  onCreateNote('task');
+                  setIsAddNoteOpen(false);
+                }}
+                className="flex items-center gap-2 px-2 py-1.5"
+              >
+                <ListTodo className="h-4 w-4" />
+                <span>Task List</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  onCreateNote('calendar');
+                  setIsAddNoteOpen(false);
+                }}
+                className="flex items-center gap-2 px-2 py-1.5"
+              >
+                <Calendar className="h-4 w-4" />
+                <span>Calendar Note</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          )}
         </DropdownMenu>
       </div>
 

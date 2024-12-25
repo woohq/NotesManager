@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -16,11 +16,19 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (!open) {
+      setName('');
+      setError('');
+      setIsSubmitting(false);
+    }
+  }, [open]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate
-    if (!name.trim()) {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
       setError('Cabinet name is required');
       return;
     }
@@ -29,19 +37,26 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
     setIsSubmitting(true);
 
     try {
-      await onConfirm(name.trim());
+      await onConfirm(trimmedName);
       setName('');
       onOpenChange(false);
     } catch (err) {
-      console.error('Error creating cabinet:', err);
-      setError(err.message || 'Failed to create cabinet');
+      if (err.message.includes('already exists')) {
+        setError('A cabinet with this name already exists');
+      } else {
+        setError(err.message || 'Failed to create cabinet');
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+      if (!isSubmitting) {
+        onOpenChange(newOpen);
+      }
+    }}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -54,10 +69,14 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
           <div className="py-4">
             <Input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (error) setError('');
+              }}
               placeholder="Cabinet name"
               className={error ? 'border-red-500' : ''}
               autoFocus
+              disabled={isSubmitting}
             />
             {error && (
               <div className="flex items-center gap-2 mt-2 text-red-500 text-sm">
@@ -95,8 +114,15 @@ export const DeleteCabinetDialog = ({
   cabinet, 
   onConfirm 
 }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setError('');
+      setIsDeleting(false);
+    }
+  }, [open]);
 
   const handleDelete = async () => {
     if (!cabinet) return;
@@ -108,7 +134,6 @@ export const DeleteCabinetDialog = ({
       await onConfirm();
       onOpenChange(false);
     } catch (err) {
-      console.error('Error deleting cabinet:', err);
       setError(err.message || 'Failed to delete cabinet');
     } finally {
       setIsDeleting(false);
@@ -118,7 +143,11 @@ export const DeleteCabinetDialog = ({
   if (!cabinet) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+      if (!isDeleting) {
+        onOpenChange(newOpen);
+      }
+    }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Delete Cabinet</DialogTitle>

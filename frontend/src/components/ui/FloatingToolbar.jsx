@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Draggable from 'react-draggable';
 import { useEditor } from '../EditorContext';
+import { useToolbar } from '../App.js';
 import { 
   Bold, 
   Italic, 
@@ -12,10 +13,11 @@ import {
 
 const FloatingToolbar = () => {
   const { editor } = useEditor();
+  const { isEnabled } = useToolbar();
   const [position] = useState({ x: -430, y: 0 });
 
   const handleCommand = (command) => {
-    if (!editor) return;
+    if (!editor || !isEnabled) return;
     command();
   };
 
@@ -26,8 +28,13 @@ const FloatingToolbar = () => {
         handleCommand(command);
       }}
       className={`p-1.5 rounded hover:bg-gray-100 w-full flex items-center justify-center ${
-        isActive ? 'bg-gray-100 text-blue-500' : 'text-gray-700'
+        isEnabled
+          ? isActive 
+            ? 'bg-gray-100 text-blue-500' 
+            : 'text-gray-700'
+          : 'text-gray-300 cursor-not-allowed'
       }`}
+      disabled={!isEnabled}
       title={tooltip}
     >
       <Icon className="w-4 h-4" />
@@ -40,7 +47,9 @@ const FloatingToolbar = () => {
       defaultPosition={position}
       bounds="parent"
     >
-      <div className="fixed z-50 shadow-lg rounded-lg bg-white border border-gray-200 w-[40px]">
+      <div className={`fixed z-50 shadow-lg rounded-lg bg-white border border-gray-200 w-[40px] ${
+        isEnabled ? 'opacity-100' : 'opacity-50'
+      }`}>
         {/* Header */}
         <div className="toolbar-handle flex items-center justify-center px-2 py-1.5 bg-gray-50 rounded-t-lg cursor-move border-b">
           <GripHorizontal className="w-4 h-4 text-gray-400" />

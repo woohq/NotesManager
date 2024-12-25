@@ -5,10 +5,15 @@ import RichTextEditor from './ui/RichTextEditor';
 import { useEditor } from './EditorContext';
 import { sanitizeContent, cleanContent } from '@/lib/sanitize';
 
-const Note = ({ note, onDelete, dragHandleProps }) => {
+const Note = ({ 
+  note, 
+  onDelete, 
+  dragHandleProps, 
+  onEditorFocus, 
+  onEditorBlur 
+}) => {
   const [isExpanded, setIsExpanded] = useState(note.type === 'calendar' ? true : !note.title);
   const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
-
   const [title, setTitle] = useState(note.title || '');
   const [content, setContent] = useState(cleanContent(note.content) || '');
   const [localNote, setLocalNote] = useState(note);
@@ -94,9 +99,11 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
   const handleEditorReady = (editor) => {
     editor.on('focus', () => {
       setEditor(editor);
+      onEditorFocus?.();
     });
     editor.on('blur', () => {
       setEditor(null);
+      onEditorBlur?.();
     });
   };
 
