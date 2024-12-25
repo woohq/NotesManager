@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.1.1 (Python 3.11.11 on darwin)" generated="2024-12-24T15:27:39.142967" rpa="false" schemaversion="5">
+<suite id="s1" name="Basic Functionality" source="/Users/quan/git/NotesManager/tests/test_cases/smoke_tests/basic_functionality.robot">
+<test id="s1-t1" name="Application Should Load Successfully" line="8">
+<kw name="Open Notes Application" owner="common" type="SETUP">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2024-12-24T15:27:39.241329" level="INFO">Opening browser 'chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${APP_URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-12-24T15:27:39.241216" elapsed="1.979693"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SeleniumLibrary">
+<arg>${SELENIUM_SPEED}</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2024-12-24T15:27:41.221513" elapsed="0.000366"/>
+</kw>
+<kw name="Set Selenium Timeout" owner="SeleniumLibrary">
+<arg>${SELENIUM_TIMEOUT}</arg>
+<doc>Sets the timeout that is used by various keywords.</doc>
+<status status="PASS" start="2024-12-24T15:27:41.221949" elapsed="0.505800"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<msg time="2024-12-24T15:27:52.401602" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-1.png"&gt;&lt;img src="selenium-screenshot-1.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2024-12-24T15:27:52.403163" level="FAIL">Element 'css=.app-container' not visible after 10 seconds.</msg>
+<arg>css=.app-container</arg>
+<arg>timeout=${DEFAULT_WAIT_TIME}</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="FAIL" start="2024-12-24T15:27:41.729087" elapsed="10.676608">Element 'css=.app-container' not visible after 10 seconds.</status>
+</kw>
+<status status="FAIL" start="2024-12-24T15:27:39.240831" elapsed="13.165086">Element 'css=.app-container' not visible after 10 seconds.</status>
+</kw>
+<kw name="Close Notes Application" owner="common" type="TEARDOWN">
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2024-12-24T15:27:52.406714" elapsed="0.573786"/>
+</kw>
+<status status="PASS" start="2024-12-24T15:27:52.406410" elapsed="0.574216"/>
+</kw>
+<doc>Verify that the application loads and shows the main interface</doc>
+<status status="FAIL" start="2024-12-24T15:27:39.240474" elapsed="13.740236">Setup failed:
+Element 'css=.app-container' not visible after 10 seconds.</status>
+</test>
+<test id="s1-t2" name="Create And Verify Standard Note" line="14">
+<kw name="Open Notes Application" owner="common" type="SETUP">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2024-12-24T15:27:52.981410" level="INFO">Opening browser 'chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${APP_URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-12-24T15:27:52.981278" elapsed="1.540207"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SeleniumLibrary">
+<arg>${SELENIUM_SPEED}</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2024-12-24T15:27:54.523424" elapsed="0.001288"/>
+</kw>
+<kw name="Set Selenium Timeout" owner="SeleniumLibrary">
+<arg>${SELENIUM_TIMEOUT}</arg>
+<doc>Sets the timeout that is used by various keywords.</doc>
+<status status="PASS" start="2024-12-24T15:27:54.524989" elapsed="0.507601"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<msg time="2024-12-24T15:28:05.707028" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-2.png"&gt;&lt;img src="selenium-screenshot-2.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2024-12-24T15:28:05.707865" level="FAIL">Element 'css=.app-container' not visible after 10 seconds.</msg>
+<arg>css=.app-container</arg>
+<arg>timeout=${DEFAULT_WAIT_TIME}</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="FAIL" start="2024-12-24T15:27:55.033539" elapsed="10.675837">Element 'css=.app-container' not visible after 10 seconds.</status>
+</kw>
+<status status="FAIL" start="2024-12-24T15:27:52.981125" elapsed="12.728618">Element 'css=.app-container' not visible after 10 seconds.</status>
+</kw>
+<kw name="Close Notes Application" owner="common" type="TEARDOWN">
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2024-12-24T15:28:05.710859" elapsed="0.570608"/>
+</kw>
+<status status="PASS" start="2024-12-24T15:28:05.710274" elapsed="0.571310"/>
+</kw>
+<doc>Create a standard note and verify its presence</doc>
+<status status="FAIL" start="2024-12-24T15:27:52.980894" elapsed="13.300775">Setup failed:
+Element 'css=.app-container' not visible after 10 seconds.</status>
+</test>
+<test id="s1-t3" name="Delete Note Operation" line="23">
+<kw name="Open Notes Application" owner="common" type="SETUP">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2024-12-24T15:28:06.282595" level="INFO">Opening browser 'chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${APP_URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-12-24T15:28:06.282459" elapsed="1.549551"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SeleniumLibrary">
+<arg>${SELENIUM_SPEED}</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2024-12-24T15:28:07.833333" elapsed="0.000920"/>
+</kw>
+<kw name="Set Selenium Timeout" owner="SeleniumLibrary">
+<arg>${SELENIUM_TIMEOUT}</arg>
+<doc>Sets the timeout that is used by various keywords.</doc>
+<status status="PASS" start="2024-12-24T15:28:07.834415" elapsed="0.504138"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<msg time="2024-12-24T15:28:19.000241" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-3.png"&gt;&lt;img src="selenium-screenshot-3.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2024-12-24T15:28:19.000375" level="FAIL">Element 'css=.app-container' not visible after 10 seconds.</msg>
+<arg>css=.app-container</arg>
+<arg>timeout=${DEFAULT_WAIT_TIME}</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="FAIL" start="2024-12-24T15:28:08.339610" elapsed="10.661065">Element 'css=.app-container' not visible after 10 seconds.</status>
+</kw>
+<status status="FAIL" start="2024-12-24T15:28:06.282278" elapsed="12.718508">Element 'css=.app-container' not visible after 10 seconds.</status>
+</kw>
+<kw name="Close Notes Application" owner="common" type="TEARDOWN">
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2024-12-24T15:28:19.001194" elapsed="0.565374"/>
+</kw>
+<status status="PASS" start="2024-12-24T15:28:19.001031" elapsed="0.565662"/>
+</kw>
+<doc>Create a note and then delete it</doc>
+<status status="FAIL" start="2024-12-24T15:28:06.281976" elapsed="13.284812">Setup failed:
+Element 'css=.app-container' not visible after 10 seconds.</status>
+</test>
+<doc>Smoke tests for Notes Manager application</doc>
+<status status="FAIL" start="2024-12-24T15:27:39.143583" elapsed="40.423719"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="3" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="0" fail="3" skip="0" id="s1" name="Basic Functionality">Basic Functionality</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

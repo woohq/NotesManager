@@ -6,7 +6,7 @@ const TaskNote = ({ note, onUpdate }) => {
 
   const updateBackend = async (newTasks) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notes/${note._id}`, {
+      const response = await fetch(`http://localhost:5001/api/notes/${note._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

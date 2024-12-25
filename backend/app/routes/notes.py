@@ -1,5 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
-from bson.objectid import ObjectId
+from flask import Blueprint, request, jsonify, current_app, make_response
 import logging
 import bleach
 from bs4 import BeautifulSoup
@@ -8,6 +7,16 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('notes', __name__, url_prefix='/api/notes')
+
+@bp.route('', methods=['OPTIONS'])
+def handle_options():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    response.headers.add("Access-Control-Max-Age", "3600")
+    return response
 
 def sanitize_html(content):
     if not content:
@@ -137,6 +146,13 @@ def create_note():
         logger.error(f"Server error: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+from flask import Blueprint, request, jsonify, current_app
+from bson.objectid import ObjectId
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 @bp.route('/<note_id>', methods=['PUT'])
 def update_note(note_id):
     """Update a note"""
@@ -147,47 +163,83 @@ def update_note(note_id):
             return jsonify({'error': 'Database not initialized'}), 500
             
         note_data = request.get_json()
+        logger.debug(f"Received update data: {note_data}")
+        
         if not note_data:
+            logger.error("No data provided in update request")
             return jsonify({'error': 'No data provided'}), 400
 
-        # Get existing note to verify cabinet_id
+        try:
+            # Verify valid ObjectId
+            object_id = ObjectId(note_id)
+        except Exception as e:
+            logger.error(f"Invalid note_id format: {note_id}")
+            return jsonify({'error': 'Invalid note ID format'}), 400
+
+        # Get existing note to verify cabinet_id and log its contents
         existing_note = current_app.db.notes.find_one({'_id': ObjectId(note_id)})
+        logger.debug(f"Existing note: {existing_note}")
+        
         if not existing_note:
+            logger.error(f"Note not found: {note_id}")
             return jsonify({'error': 'Note not found'}), 404
 
-        update_data = {
-            'title': note_data.get('title', ''),
-            'order': note_data.get('order'),
-            'type': note_data.get('type', 'standard'),
-            'cabinet_id': existing_note['cabinet_id']  # Preserve cabinet_id
-        }
-
-        # Handle content based on note type and sanitize if necessary
-        if update_data['type'] == 'task':
-            update_data['tasks'] = note_data.get('tasks', [])
-        elif update_data['type'] == 'calendar':
-            update_data['viewType'] = note_data.get('viewType', 'month')
-            update_data['calendarData'] = note_data.get('calendarData', [])
-            update_data['views'] = note_data.get('views', [])
-        else:
-            update_data['content'] = sanitize_html(note_data.get('content', ''))
+        # Build update data carefully
+        update_data = {}
         
+        # Add title if present
+        if 'title' in note_data:
+            update_data['title'] = note_data['title']
+            
+        # Add order if present
+        if 'order' in note_data:
+            update_data['order'] = note_data['order']
+            
+        # Add type if present
+        if 'type' in note_data:
+            update_data['type'] = note_data['type']
+            
+        # Keep existing cabinet_id
+        update_data['cabinet_id'] = existing_note['cabinet_id']
+
+        # Handle content based on note type
+        note_type = note_data.get('type', existing_note.get('type', 'standard'))
+        if note_type == 'task':
+            if 'tasks' in note_data:
+                update_data['tasks'] = note_data['tasks']
+        elif note_type == 'calendar':
+            if 'viewType' in note_data:
+                update_data['viewType'] = note_data['viewType']
+            if 'calendarData' in note_data:
+                update_data['calendarData'] = note_data['calendarData']
+            if 'views' in note_data:
+                update_data['views'] = note_data['views']
+        else:
+            if 'content' in note_data:
+                update_data['content'] = sanitize_html(note_data['content'])
+
+        logger.debug(f"Final update data: {update_data}")
+        
+        # Perform the update
         result = current_app.db.notes.update_one(
             {'_id': ObjectId(note_id)},
             {'$set': update_data}
         )
         
         if result.matched_count == 0:
+            logger.error(f"No note found to update with ID: {note_id}")
             return jsonify({'error': 'Note not found'}), 404
-            
-        updated_note = current_app.db.notes.find_one({'_id': ObjectId(note_id)})
-        updated_note['_id'] = str(updated_note['_id'])
         
-        logger.debug(f"Updated note {note_id}")
-        return jsonify(updated_note), 200
+        # Get the updated note
+        updated_note = current_app.db.notes.find_one({'_id': ObjectId(note_id)})
+        if updated_note:
+            updated_note['_id'] = str(updated_note['_id'])
+        
+        logger.debug(f"Successfully updated note: {updated_note}")
+        return jsonify(updated_note)
         
     except Exception as e:
-        logger.error(f"Server error: {str(e)}")
+        logger.error(f"Error updating note: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 @bp.route('/<note_id>', methods=['DELETE'])

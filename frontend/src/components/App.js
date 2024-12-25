@@ -17,37 +17,42 @@ function App() {
     loadCabinets();
   }, []);
 
-  const loadCabinets = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/cabinets', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-      });
+const fetchConfig = {
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include'
+};
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+// Example usage in your loadCabinets function
+const loadCabinets = async () => {
+  try {
+    const response = await fetch('http://localhost:5001/api/cabinets', {
+      method: 'GET',
+      ...fetchConfig
+    });
 
-      const data = await response.json();
-      setCabinets(data);
-
-      const lastCabinetId = localStorage.getItem('lastCabinetId');
-      const defaultCabinet = data.find(c => c._id === lastCabinetId) || data[0];
-      if (defaultCabinet) {
-        setCurrentCabinet(defaultCabinet);
-        loadNotes(defaultCabinet._id);
-      }
-    } catch (error) {
-      console.error('Error loading cabinets:', error);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    const data = await response.json();
+    setCabinets(data);
+
+    const lastCabinetId = localStorage.getItem('lastCabinetId');
+    const defaultCabinet = data.find(c => c._id === lastCabinetId) || data[0];
+    if (defaultCabinet) {
+      setCurrentCabinet(defaultCabinet);
+      loadNotes(defaultCabinet._id);
+    }
+  } catch (error) {
+    console.error('Error loading cabinets:', error);
+  }
+};
 
   const loadNotes = async (cabinetId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notes?cabinet_id=${cabinetId}`, {
+      const response = await fetch(`http://localhost:5001/api/notes?cabinet_id=${cabinetId}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -74,7 +79,7 @@ function App() {
 
   const handleCabinetCreate = async (name) => {
     try {
-      const response = await fetch('http://localhost:5000/api/cabinets', {
+      const response = await fetch('http://localhost:5001/api/cabinets', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -98,7 +103,7 @@ function App() {
 
   const handleCabinetDelete = async (cabinetId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cabinets/${cabinetId}`, {
+      const response = await fetch(`http://localhost:5001/api/cabinets/${cabinetId}`, {
         method: 'DELETE',
         headers: {
           'Accept': 'application/json',
@@ -141,7 +146,7 @@ function App() {
         } : {})
       };
 
-      const response = await fetch('http://localhost:5000/api/notes', {
+      const response = await fetch('http://localhost:5001/api/notes', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -163,7 +168,7 @@ function App() {
 
   const deleteNote = async (noteId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notes/${noteId}`, {
+      const response = await fetch(`http://localhost:5001/api/notes/${noteId}`, {
         method: 'DELETE',
         headers: {
           'Accept': 'application/json',
@@ -195,7 +200,7 @@ function App() {
 
     try {
       await Promise.all(updatedNotes.map(note => 
-        fetch(`http://localhost:5000/api/notes/${note._id}`, {
+        fetch(`http://localhost:5001/api/notes/${note._id}`, {
           method: 'PUT',
           headers: {
             'Accept': 'application/json',

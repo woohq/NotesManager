@@ -8,6 +8,7 @@ import { sanitizeContent, cleanContent } from '@/lib/sanitize';
 const Note = ({ note, onDelete, dragHandleProps }) => {
   const [isExpanded, setIsExpanded] = useState(note.type === 'calendar' ? true : !note.title);
   const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
+
   const [title, setTitle] = useState(note.title || '');
   const [content, setContent] = useState(cleanContent(note.content) || '');
   const [localNote, setLocalNote] = useState(note);
@@ -47,7 +48,7 @@ const Note = ({ note, onDelete, dragHandleProps }) => {
         updatedNote.views = localNote.views;
       }
 
-      const response = await fetch(`http://localhost:5000/api/notes/${note._id}`, {
+      const response = await fetch(`http://localhost:5001/api/notes/${note._id}`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',

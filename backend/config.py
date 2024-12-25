@@ -11,8 +11,12 @@ class Config:
     # Flask settings
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')
     
+    # CORS settings
+    CORS_ORIGINS = ['http://localhost:3000']
+    CORS_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    CORS_ALLOW_HEADERS = ['Content-Type', 'Authorization']
+    CORS_SUPPORTS_CREDENTIALS = True
+    CORS_MAX_AGE = 3600  # Maximum cache age for preflight requests
+    
     # Basic server settings
     DEBUG = True
-    
-    # CORS settings simplified
-    CORS_HEADERS = ['Content-Type', 'Authorization']
