@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle } from 'lucide-react';
+import { cn, validateCabinetName } from '@/lib/utils';
 
 export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
   const [name, setName] = useState('');
@@ -27,9 +28,9 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      setError('Cabinet name is required');
+    const validation = validateCabinetName(name);
+    if (!validation.isValid) {
+      setError(validation.error);
       return;
     }
 
@@ -37,7 +38,7 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
     setIsSubmitting(true);
 
     try {
-      await onConfirm(trimmedName);
+      await onConfirm(name.trim());
       setName('');
       onOpenChange(false);
     } catch (err) {
@@ -92,12 +93,14 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
+              data-testid="cancel-create-cabinet"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
+              data-testid="confirm-create-cabinet"
             >
               {isSubmitting ? 'Creating...' : 'Create Cabinet'}
             </Button>
@@ -152,9 +155,9 @@ export const DeleteCabinetDialog = ({
         <DialogHeader>
           <DialogTitle>Delete Cabinet</DialogTitle>
           <DialogDescription className="space-y-3">
-            <p>
-              Are you sure you want to delete <strong>{cabinet.name}</strong>?
-            </p>
+            <div className="break-words">
+              Are you sure you want to delete <strong className="break-words">{cabinet.name}</strong>?
+            </div>
             <p className="font-medium text-red-500">
               This will permanently delete all notes in this cabinet. 
               This action cannot be undone.

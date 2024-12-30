@@ -2,13 +2,16 @@
 import os
 import sys
 from app import create_app
+from config import Config, TestConfig
 
-app = create_app()
+# Use TestConfig if TEST_MODE environment variable is set
+config_class = TestConfig if os.getenv('TEST_MODE') == 'true' else Config
+app = create_app(config_class)
 
 if __name__ == '__main__':
     app.run(
-        host='0.0.0.0',  # Listen on all available interfaces
-        port=5001,  # Changed from 5000 to 5001
+        host='0.0.0.0',
+        port=5001,
         debug=True,
         use_reloader=True
     )

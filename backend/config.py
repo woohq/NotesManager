@@ -16,7 +16,11 @@ class Config:
     CORS_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
     CORS_ALLOW_HEADERS = ['Content-Type', 'Authorization']
     CORS_SUPPORTS_CREDENTIALS = True
-    CORS_MAX_AGE = 3600  # Maximum cache age for preflight requests
+    CORS_MAX_AGE = 3600
     
-    # Basic server settings
     DEBUG = True
+
+class TestConfig(Config):
+    """Test configuration that uses a separate database"""
+    MONGO_URI = os.getenv('TEST_MONGO_URI', 'mongodb://localhost:27017/notes_manager_test')
+    TESTING = True

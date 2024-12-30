@@ -81,14 +81,13 @@ def get_notes():
 @bp.route('', methods=['POST'])
 def create_note():
     """Create a new note"""
-    logger.debug("POST /api/notes endpoint called")
+    note_data = request.get_json()
+    logger.debug(f"Raw note data received: {note_data}")
     try:
         if not hasattr(current_app, 'db'):
-            logger.error("Database not initialized")
             return jsonify({'error': 'Database not initialized'}), 500
             
         note_data = request.get_json()
-        logger.debug(f"Received note data: {note_data}")
         
         if not note_data:
             return jsonify({'error': 'No data provided'}), 400
@@ -139,11 +138,9 @@ def create_note():
         inserted_note = current_app.db.notes.find_one({'_id': result.inserted_id})
         inserted_note['_id'] = str(inserted_note['_id'])
         
-        logger.debug(f"Created note with ID: {inserted_note['_id']}")
         return jsonify(inserted_note), 201
         
     except Exception as e:
-        logger.error(f"Server error: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 from flask import Blueprint, request, jsonify, current_app
@@ -156,32 +153,25 @@ logger = logging.getLogger(__name__)
 @bp.route('/<note_id>', methods=['PUT'])
 def update_note(note_id):
     """Update a note"""
-    logger.debug(f"PUT /api/notes/{note_id} endpoint called")
     try:
         if not hasattr(current_app, 'db'):
-            logger.error("Database not initialized")
             return jsonify({'error': 'Database not initialized'}), 500
             
         note_data = request.get_json()
-        logger.debug(f"Received update data: {note_data}")
         
         if not note_data:
-            logger.error("No data provided in update request")
             return jsonify({'error': 'No data provided'}), 400
 
         try:
             # Verify valid ObjectId
             object_id = ObjectId(note_id)
         except Exception as e:
-            logger.error(f"Invalid note_id format: {note_id}")
             return jsonify({'error': 'Invalid note ID format'}), 400
 
-        # Get existing note to verify cabinet_id and log its contents
+        # Get existing note to verify cabinet_id
         existing_note = current_app.db.notes.find_one({'_id': ObjectId(note_id)})
-        logger.debug(f"Existing note: {existing_note}")
         
         if not existing_note:
-            logger.error(f"Note not found: {note_id}")
             return jsonify({'error': 'Note not found'}), 404
 
         # Build update data carefully
@@ -198,6 +188,10 @@ def update_note(note_id):
         # Add type if present
         if 'type' in note_data:
             update_data['type'] = note_data['type']
+            
+        # Add isExpanded if present
+        if 'isExpanded' in note_data:
+            update_data['isExpanded'] = note_data['isExpanded']
             
         # Keep existing cabinet_id
         update_data['cabinet_id'] = existing_note['cabinet_id']
@@ -217,8 +211,6 @@ def update_note(note_id):
         else:
             if 'content' in note_data:
                 update_data['content'] = sanitize_html(note_data['content'])
-
-        logger.debug(f"Final update data: {update_data}")
         
         # Perform the update
         result = current_app.db.notes.update_one(
@@ -227,7 +219,6 @@ def update_note(note_id):
         )
         
         if result.matched_count == 0:
-            logger.error(f"No note found to update with ID: {note_id}")
             return jsonify({'error': 'Note not found'}), 404
         
         # Get the updated note
@@ -235,11 +226,9 @@ def update_note(note_id):
         if updated_note:
             updated_note['_id'] = str(updated_note['_id'])
         
-        logger.debug(f"Successfully updated note: {updated_note}")
         return jsonify(updated_note)
         
     except Exception as e:
-        logger.error(f"Error updating note: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 @bp.route('/<note_id>', methods=['DELETE'])

@@ -3,14 +3,14 @@ import TaskNote from './TaskNote';
 import CalendarNote from './CalendarNote';
 import RichTextEditor from './ui/RichTextEditor';
 import { useEditor } from './EditorContext';
-import { sanitizeContent, cleanContent } from '@/lib/sanitize';
+import { sanitizeContent, cleanContent } from '@/lib/utils';
 
-const Note = ({ 
-  note, 
-  onDelete, 
-  dragHandleProps, 
-  onEditorFocus, 
-  onEditorBlur 
+const Note = ({
+  note,
+  onDelete,
+  dragHandleProps,
+  onEditorFocus,
+  onEditorBlur
 }) => {
   const [isExpanded, setIsExpanded] = useState(note.type === 'calendar' ? true : !note.title);
   const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
@@ -119,6 +119,28 @@ const Note = ({
     }, 500);
   };
 
+  const updateExpansionState = async (expanded) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/notes/${note._id}`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...note,
+          isExpanded: expanded
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error updating note expansion state:', error);
+    }
+  };
+
   const handleHeaderClick = (e) => {
     if (isEditingTitle) return;
 
@@ -135,35 +157,35 @@ const Note = ({
     }
 
     clickTimeoutRef.current = setTimeout(() => {
-      setIsExpanded(!isExpanded);
+      const newExpanded = !isExpanded;
+      setIsExpanded(newExpanded);
+      updateExpansionState(newExpanded);
       clickTimeoutRef.current = null;
     }, 200);
   };
 
+  // Update local expansion state when note changes (e.g., when switching cabinets)
+  useEffect(() => {
+    setIsExpanded(
+      note.isExpanded !== undefined ? note.isExpanded : (note.type === 'calendar' ? true : !note.title)
+    );
+  }, [note]);
+
   const renderContent = () => {
     if (note.type === 'task') {
-      return (
-        <div className="note-content">
-          <TaskNote note={localNote} onUpdate={handleNoteUpdate} />
-        </div>
-      );
+      return <TaskNote note={localNote} onUpdate={handleNoteUpdate} />;
     } else if (note.type === 'calendar') {
-      return (
-        <div className="note-content">
-          <CalendarNote note={localNote} onUpdate={handleNoteUpdate} />
-        </div>
-      );
+      return <CalendarNote note={localNote} onUpdate={handleNoteUpdate} />;
     }
-
+    
     return (
-      <div className="note-content">
-        <RichTextEditor
-          content={content}
-          onChange={handleContentChange}
-          onEditorReady={handleEditorReady}
-          className="content-textarea"
-        />
-      </div>
+      <RichTextEditor
+        content={content}
+        onChange={handleContentChange}
+        onEditorReady={handleEditorReady}
+        className="content-textarea"
+        data-testid={`note-editor-${note.order}`}
+      />
     );
   };
 
@@ -180,39 +202,60 @@ const Note = ({
 
   return (
     <div
-      className={`note ${isExpanded ? 'expanded' : ''}`}
-      tabIndex={-1}
+      className="note-wrapper"
+      data-position={note.order}
+      data-testid={`note-${note.order}`}
     >
       <div
-        className={`note-header ${isEditingTitle ? 'editing' : ''}`}
-        onClick={handleHeaderClick}
-        {...dragHandleProps}
+        className={`note ${isExpanded ? 'expanded' : ''}`}
+        tabIndex={-1}
       >
-        {isEditingTitle ? (
-          <input
-            ref={titleInputRef}
-            className="title-input"
-            value={title}
-            placeholder="Enter title..."
-            onChange={handleTitleChange}
-            onBlur={handleTitleBlur}
-            onClick={(e) => e.stopPropagation()}
-          />
-        ) : (
-          <div className="title-display">{title || 'Untitled'}</div>
-        )}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(note._id);
-          }}
-          className="delete-button"
+        <div
+          className={`note-header ${isEditingTitle ? 'editing' : ''}`}
+          onClick={handleHeaderClick}
+          data-testid={`note-header-${note.order}`}
+          {...dragHandleProps}
         >
-          ×
-        </button>
-      </div>
+          {isEditingTitle ? (
+            <input
+              ref={titleInputRef}
+              className="title-input"
+              value={title}
+              placeholder="Enter title..."
+              onChange={handleTitleChange}
+              onBlur={handleTitleBlur}
+              onClick={(e) => e.stopPropagation()}
+              data-testid={`note-title-input-${note.order}`}
+            />
+          ) : (
+            <div
+              className="title-display"
+              data-testid={`note-title-display-${note.order}`}
+            >
+              {title || 'Untitled'}
+            </div>
+          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(note._id);
+            }}
+            className="delete-button"
+            data-testid={`note-delete-${note.order}`}
+          >
+            ×
+          </button>
+        </div>
 
-      {isExpanded && renderContent()}
+        {isExpanded && (
+          <div
+            className="note-content"
+            data-testid={`note-content-${note.order}`}
+          >
+            {renderContent()}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

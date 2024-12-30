@@ -53,7 +53,7 @@ function App() {
         const lastCabinetId = localStorage.getItem('lastCabinetId');
         const lastUsedCabinet = data.find(c => c._id === lastCabinetId);
         const defaultCabinet = data.find(c => c.name === 'Default Cabinet');
-        
+
         if (lastUsedCabinet) {
           setCurrentCabinet(lastUsedCabinet);
           await loadNotes(lastUsedCabinet._id);
@@ -73,7 +73,7 @@ function App() {
 
   const loadNotes = async (cabinetId) => {
     if (!cabinetId) return;
-    
+
     try {
       const response = await fetch(`http://localhost:5001/api/notes?cabinet_id=${cabinetId}`, {
         method: 'GET',
@@ -144,7 +144,7 @@ function App() {
       }
 
       setCabinets(prev => prev.filter(c => c._id !== cabinetId));
-      
+
       // If the deleted cabinet was the current one, switch to Default Cabinet
       if (currentCabinet?._id === cabinetId) {
         const defaultCabinet = cabinets.find(c => c.name === 'Default Cabinet');
@@ -160,37 +160,34 @@ function App() {
   };
 
   const createNote = async (type = 'standard') => {
-    if (!currentCabinet) {
-      console.warn('No cabinet selected');
-      return;
-    }
+    if (!currentCabinet) return;
     
     try {
-      const maxOrder = notes.length > 0 
-        ? Math.max(...notes.map(note => note.order || 0))
-        : -1;
+      const maxOrder = Math.max(...notes.map(note => note.order || 0), -1);
+      
+      // Create type-specific data first
+      let typeSpecificData = {};
+      if (type === 'task') {
+        typeSpecificData = { tasks: [], type: 'task' };
+      } else if (type === 'calendar') {
+        typeSpecificData = {
+          type: 'calendar',
+          viewType: 'month',
+          calendarData: []
+        };
+      } else {
+        typeSpecificData = { type: 'standard' };
+      }
 
+      // Then merge with common data
       const noteData = {
+        ...typeSpecificData,  // Type-specific data first
         title: '',
         content: '',
-        type,
         timestamp: new Date().toISOString(),
         order: maxOrder + 1000,
         cabinet_id: currentCabinet._id
       };
-
-      // Add type-specific initial data
-      if (type === 'task') {
-        noteData.tasks = [];
-      } else if (type === 'calendar') {
-        noteData.viewType = 'month';
-        noteData.calendarData = [];
-        noteData.views = [{
-          id: 'view-1',
-          viewType: 'month',
-          selectedDate: new Date().toISOString()
-        }];
-      }
 
       const response = await fetch('http://localhost:5001/api/notes', {
         method: 'POST',
@@ -204,9 +201,9 @@ function App() {
       if (!response.ok) {
         throw new Error(`Failed to create note: ${response.status}`);
       }
-
+      
       const newNote = await response.json();
-      setNotes(prevNotes => [...prevNotes, newNote]);
+      setNotes([...notes, newNote]);
     } catch (error) {
       console.error('Error creating note:', error);
     }
@@ -241,8 +238,44 @@ function App() {
     }
   };
 
-  // Rest of the component implementation remains the same...
-  
+  const reorderNotes = async (sourceIndex, destinationIndex) => {
+    const reorderedNotes = Array.from(notes);
+    const [movedNote] = reorderedNotes.splice(sourceIndex, 1);
+    reorderedNotes.splice(destinationIndex, 0, movedNote);
+
+    // Calculate new order values
+    const updatedNotes = reorderedNotes.map((note, index) => ({
+      ...note,
+      order: index * 1000
+    }));
+
+    // Optimistically update UI
+    setNotes(updatedNotes);
+
+    try {
+      // Update the moved note's order in the backend
+      const response = await fetch(`http://localhost:5001/api/notes/${movedNote._id}`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...movedNote,
+          order: updatedNotes[destinationIndex].order
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update note order: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error updating note order:', error);
+      // Reload notes to restore state in case of error
+      await loadNotes(currentCabinet._id);
+    }
+  };
+
   return (
     <ToolbarContext.Provider value={{ isEnabled: isToolbarEnabled, setIsEnabled: setIsToolbarEnabled }}>
       <EditorProvider>
@@ -258,11 +291,18 @@ function App() {
               onCreateNote={createNote}
               isCreateDisabled={!currentCabinet}
             />
-            
-            <DragDropContext onDragEnd={(result) => {
+
+            <DragDropContext onDragEnd={async (result) => {
               if (!result.destination) return;
-              if (result.destination.index === result.source.index) return;
-              reorderNotes(result.source.index, result.destination.index);
+
+              if (result.destination.index === result.source.index) {
+                return;
+              }
+
+              await reorderNotes(
+                result.source.index,
+                result.destination.index
+              );
             }}>
               <Droppable droppableId="droppable">
                 {(provided) => (
@@ -281,6 +321,8 @@ function App() {
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
+                            data-position={index}
+                            className="note-wrapper"
                           >
                             <Note
                               note={note}

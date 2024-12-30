@@ -9,14 +9,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CreateCabinetDialog, DeleteCabinetDialog } from './CabinetDialogs';
 
-const CabinetHeader = ({ 
-  cabinets, 
-  currentCabinet, 
+const CabinetHeader = ({
+  cabinets,
+  currentCabinet,
   onCabinetChange,
   onCabinetCreate,
   onCabinetDelete,
   onCreateNote,
-  isCreateDisabled 
+  isCreateDisabled
 }) => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -43,7 +43,15 @@ const CabinetHeader = ({
   const handleCabinetDelete = async () => {
     if (cabinetToDelete) {
       try {
+        const nextCabinet = cabinets.find(c => c.name === 'Default Cabinet' && c._id !== cabinetToDelete._id)
+          || cabinets.find(c => c._id !== cabinetToDelete._id);
+
         await onCabinetDelete(cabinetToDelete._id);
+
+        if (currentCabinet?._id === cabinetToDelete._id && nextCabinet) {
+          onCabinetChange(nextCabinet);
+        }
+
         setIsDeleteDialogOpen(false);
         setCabinetToDelete(null);
       } catch (error) {
@@ -61,20 +69,22 @@ const CabinetHeader = ({
       <div className="flex items-center gap-4">
         {/* Cabinet Selector */}
         <DropdownMenu modal={false}>
-          <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-100 rounded-md transition-colors focus:outline-none">
-            {cabinets.length === 0 ? 'Click Here to Create a Cabinet' : (currentCabinet?.name || 'Select Cabinet')}
-            <ChevronDown className="h-4 w-4" />
+          <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-100 rounded-md transition-colors focus:outline-none max-w-[24rem]">
+            <span className="truncate">
+              {cabinets.length === 0 ? 'Click Here to Create a Cabinet' : (currentCabinet?.name || 'Select Cabinet')}
+            </span>
+            <ChevronDown className="h-4 w-4 shrink-0" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56">
+          <DropdownMenuContent align="start" className="min-w-[14rem] max-w-[24rem]">
             {cabinets.map((cabinet) => (
               <DropdownMenuItem
                 key={cabinet._id}
-                className="flex items-center justify-between group"
+                className="flex items-center justify-between group gap-2"
                 onClick={() => handleCabinetSelect(cabinet)}
               >
-                <span>{cabinet.name}</span>
+                <span className="truncate">{cabinet.name}</span>
                 <button
-                  className="delete-button opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-opacity"
+                  className="delete-button opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-opacity shrink-0"
                   onClick={(e) => handleDeleteClick(cabinet, e)}
                 >
                   <Trash2 className="h-4 w-4 text-red-500" />
@@ -98,10 +108,10 @@ const CabinetHeader = ({
 
         {/* Add Note Dropdown */}
         <DropdownMenu open={isAddNoteOpen} onOpenChange={setIsAddNoteOpen}>
-          <DropdownMenuTrigger 
+          <DropdownMenuTrigger
             className={`px-3 py-2 bg-[#f9fafb] border border-[#e5e7eb] rounded text-[#6b7280] transition-all 
-              ${isCreateDisabled || cabinets.length === 0 
-                ? 'opacity-50 cursor-not-allowed' 
+              ${isCreateDisabled || cabinets.length === 0
+                ? 'opacity-50 cursor-not-allowed'
                 : 'cursor-pointer hover:bg-[#f3f4f6] hover:border-[#d1d5db] hover:text-[#374151]'}`}
             disabled={isCreateDisabled || cabinets.length === 0}
           >
