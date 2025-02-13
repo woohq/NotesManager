@@ -9,17 +9,11 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from config import Config
 
-def ensure_default_cabinet(db):
-    """Ensure the default cabinet exists"""
-    default_cabinet = db.cabinets.find_one({'name': 'Default Cabinet'})
-    if not default_cabinet:
-        db.cabinets.insert_one({
-            'name': 'Default Cabinet',
-            'created_at': datetime.utcnow(),
-            'updated_at': datetime.utcnow()
-        })
-
 def create_indexes(db):
+    # Drop existing indexes to ensure clean state
+    db.cabinets.drop_indexes()
+    db.notes.drop_indexes()
+    
     """Create necessary database indexes"""
     # Create index for notes order within a cabinet
     db.notes.create_index([
@@ -59,7 +53,6 @@ def create_app(config_class=Config):
     app.db = client[db_name]
 
     # Set up database
-    ensure_default_cabinet(app.db)
     create_indexes(app.db)
 
     # Register blueprints

@@ -23,10 +23,10 @@ export function validateCabinetName(name) {
     };
   }
 
-  if (trimmedName.length > 50) {
+  if (trimmedName.length > 51) {
     return {
       isValid: false,
-      error: 'Cabinet name must be 30 characters or less'
+      error: 'Cabinet name must be 50 characters or less'
     };
   }
 

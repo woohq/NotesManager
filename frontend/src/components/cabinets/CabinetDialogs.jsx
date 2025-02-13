@@ -27,13 +27,14 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // Frontend validation first
     const validation = validateCabinetName(name);
     if (!validation.isValid) {
       setError(validation.error);
       return;
     }
-
+    
     setError('');
     setIsSubmitting(true);
 
@@ -42,10 +43,11 @@ export const CreateCabinetDialog = ({ open, onOpenChange, onConfirm }) => {
       setName('');
       onOpenChange(false);
     } catch (err) {
-      if (err.message.includes('already exists')) {
+      const errorMessage = err.response?.data?.error || err.message;
+      if (errorMessage === 'A cabinet with this name already exists') {
         setError('A cabinet with this name already exists');
       } else {
-        setError(err.message || 'Failed to create cabinet');
+        setError(errorMessage || 'Failed to create cabinet');
       }
     } finally {
       setIsSubmitting(false);
@@ -175,6 +177,7 @@ export const DeleteCabinetDialog = ({
         <DialogFooter>
           <Button
             type="button"
+            data-testid='cancel-delete-cabinet'
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
@@ -182,6 +185,7 @@ export const DeleteCabinetDialog = ({
             Cancel
           </Button>
           <Button
+            data-testid="confirm-delete-cabinet"
             type="button"
             variant="destructive"
             onClick={handleDelete}

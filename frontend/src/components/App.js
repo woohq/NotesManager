@@ -111,11 +111,12 @@ function App() {
         },
         body: JSON.stringify({ name })
       });
-
+  
       if (!response.ok) {
-        throw new Error(`Failed to create cabinet: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to create cabinet: ${response.status}`);
       }
-
+  
       const newCabinet = await response.json();
       setCabinets(prev => [...prev, newCabinet]);
       setCurrentCabinet(newCabinet);
@@ -123,7 +124,6 @@ function App() {
       localStorage.setItem('lastCabinetId', newCabinet._id);
       return newCabinet;
     } catch (error) {
-      console.error('Error creating cabinet:', error);
       throw error;
     }
   };
@@ -143,11 +143,20 @@ function App() {
         throw new Error(`Failed to delete cabinet: ${response.status}`);
       }
 
-      setCabinets(prev => prev.filter(c => c._id !== cabinetId));
+      // Update cabinets state
+      const updatedCabinets = cabinets.filter(c => c._id !== cabinetId);
+      setCabinets(updatedCabinets);
 
-      // If the deleted cabinet was the current one, switch to Default Cabinet
-      if (currentCabinet?._id === cabinetId) {
-        const defaultCabinet = cabinets.find(c => c.name === 'Default Cabinet');
+      // If there are no cabinets left
+      if (updatedCabinets.length === 0) {
+        setCurrentCabinet(null);
+        setNotes([]);
+        localStorage.removeItem('lastCabinetId');
+      }
+      // If the deleted cabinet was the current one and other cabinets exist
+      else if (currentCabinet?._id === cabinetId) {
+        const defaultCabinet = updatedCabinets.find(c => c.name === 'Default Cabinet')
+          || updatedCabinets[0];  // Fallback to first available cabinet
         if (defaultCabinet) {
           await handleCabinetChange(defaultCabinet);
           localStorage.setItem('lastCabinetId', defaultCabinet._id);
@@ -243,17 +252,20 @@ function App() {
     const [movedNote] = reorderedNotes.splice(sourceIndex, 1);
     reorderedNotes.splice(destinationIndex, 0, movedNote);
 
-    // Calculate new order values
-    const updatedNotes = reorderedNotes.map((note, index) => ({
-      ...note,
-      order: index * 1000
-    }));
+    // Calculate new order values and preserve ALL existing note data
+    const updatedNotes = reorderedNotes.map((note, index) => {
+      // Create a deep copy of the note to avoid reference issues
+      return {
+        ...JSON.parse(JSON.stringify(note)),
+        order: index * 1000
+      };
+    });
 
-    // Optimistically update UI
+    // Optimistically update UI with full note data
     setNotes(updatedNotes);
 
     try {
-      // Update the moved note's order in the backend
+      // Only send order update to backend, but wait for response
       const response = await fetch(`http://localhost:5001/api/notes/${movedNote._id}`, {
         method: 'PUT',
         headers: {
@@ -261,7 +273,6 @@ function App() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          ...movedNote,
           order: updatedNotes[destinationIndex].order
         })
       });
@@ -269,9 +280,21 @@ function App() {
       if (!response.ok) {
         throw new Error(`Failed to update note order: ${response.status}`);
       }
+
+      // Get the updated note to ensure data consistency
+      const updatedNote = await response.json();
+      
+      // Update the specific note in our state with server response
+      setNotes(prevNotes => 
+        prevNotes.map(note => 
+          note._id === updatedNote._id 
+            ? { ...note, ...updatedNote }
+            : note
+        )
+      );
     } catch (error) {
       console.error('Error updating note order:', error);
-      // Reload notes to restore state in case of error
+      // Reload all notes to restore correct state
       await loadNotes(currentCabinet._id);
     }
   };

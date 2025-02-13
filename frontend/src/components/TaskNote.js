@@ -6,19 +6,33 @@ const TaskNote = ({ note, onUpdate }) => {
 
   const updateBackend = async (newTasks) => {
     try {
+      // Ensure we're sending valid tasks array
+      const tasks = newTasks || [];
+      
+      // Create a clean note update object
+      const noteUpdate = {
+        ...note,
+        type: 'task',  // Ensure type is set
+        tasks: tasks,  // Use validated tasks array
+        content: '',   // Task notes don't use content field
+      };
+
       const response = await fetch(`http://localhost:5001/api/notes/${note._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...note,
-          tasks: newTasks,
-        }),
+        body: JSON.stringify(noteUpdate),
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Get the response to ensure we're in sync
+      const updatedNote = await response.json();
+      if (updatedNote.tasks) {
+        setTasks(updatedNote.tasks);
       }
     } catch (error) {
       console.error('Error updating tasks:', error);
@@ -26,15 +40,16 @@ const TaskNote = ({ note, onUpdate }) => {
   };
 
   const handleUpdate = (newTasks) => {
-    setTasks(newTasks);
+    // Ensure we're not setting null or undefined
+    const validTasks = newTasks || [];
+    setTasks(validTasks);
     
     if (updateTimeoutRef.current) {
       clearTimeout(updateTimeoutRef.current);
     }
     
-    updateTimeoutRef.current = setTimeout(() => {
-      updateBackend(newTasks);
-    }, 500);
+    // Ensure we send the full note data with tasks
+    updateBackend(validTasks);
   };
 
   const addTask = () => {
@@ -61,11 +76,19 @@ const TaskNote = ({ note, onUpdate }) => {
     handleUpdate(newTasks);
   };
 
+  // Always keep local state synchronized with note props
   useEffect(() => {
-    if (note.tasks && JSON.stringify(note.tasks) !== JSON.stringify(tasks)) {
-      setTasks(note.tasks);
+    // Ensure we have tasks array, defaulting to empty if not present
+    const noteTasks = note.tasks || [];
+    if (JSON.stringify(noteTasks) !== JSON.stringify(tasks)) {
+      setTasks(noteTasks);
+      // Clear any pending updates
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+        updateTimeoutRef.current = null;
+      }
     }
-  }, [note.tasks]);
+  }, [note, note.tasks]);
 
   useEffect(() => {
     return () => {

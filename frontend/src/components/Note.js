@@ -12,7 +12,13 @@ const Note = ({
   onEditorFocus,
   onEditorBlur
 }) => {
-  const [isExpanded, setIsExpanded] = useState(note.type === 'calendar' ? true : !note.title);
+  // Initialize isExpanded based on note.isExpanded if it exists, otherwise use default logic
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (note.isExpanded !== undefined) {
+      return note.isExpanded;
+    }
+    return note.type === 'calendar' ? true : !note.title;
+  });
   const [isEditingTitle, setIsEditingTitle] = useState(!note.title);
   const [title, setTitle] = useState(note.title || '');
   const [content, setContent] = useState(cleanContent(note.content) || '');
@@ -164,12 +170,12 @@ const Note = ({
     }, 200);
   };
 
-  // Update local expansion state when note changes (e.g., when switching cabinets)
+  // Only update expansion state when explicitly changed, not on every note update
   useEffect(() => {
-    setIsExpanded(
-      note.isExpanded !== undefined ? note.isExpanded : (note.type === 'calendar' ? true : !note.title)
-    );
-  }, [note]);
+    if (note.isExpanded !== undefined && note._id === localNote._id) {
+      setIsExpanded(note.isExpanded);
+    }
+  }, [note.isExpanded, note._id, localNote._id]);
 
   const renderContent = () => {
     if (note.type === 'task') {

@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app, make_response
+from bson.objectid import ObjectId
 import logging
 import bleach
 from bs4 import BeautifulSoup
@@ -87,8 +88,6 @@ def create_note():
         if not hasattr(current_app, 'db'):
             return jsonify({'error': 'Database not initialized'}), 500
             
-        note_data = request.get_json()
-        
         if not note_data:
             return jsonify({'error': 'No data provided'}), 400
             
@@ -97,10 +96,16 @@ def create_note():
         if not cabinet_id:
             return jsonify({'error': 'cabinet_id is required'}), 400
             
-        # Verify cabinet exists
-        cabinet = current_app.db.cabinets.find_one({'_id': ObjectId(cabinet_id)})
-        if not cabinet:
-            return jsonify({'error': 'Cabinet not found'}), 404
+        try:
+            # Convert string ID to ObjectId
+            cabinet_object_id = ObjectId(cabinet_id)
+            # Verify cabinet exists
+            cabinet = current_app.db.cabinets.find_one({'_id': cabinet_object_id})
+            if not cabinet:
+                return jsonify({'error': 'Cabinet not found'}), 404
+        except Exception as e:
+            logger.error(f"Invalid cabinet ID format: {str(e)}")
+            return jsonify({'error': 'Invalid cabinet ID format'}), 400
 
         # Sanitize HTML content if present
         if 'content' in note_data:
@@ -141,11 +146,8 @@ def create_note():
         return jsonify(inserted_note), 201
         
     except Exception as e:
+        logger.error(f"Error creating note: {str(e)}")
         return jsonify({'error': str(e)}), 500
-
-from flask import Blueprint, request, jsonify, current_app
-from bson.objectid import ObjectId
-import logging
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -168,7 +170,7 @@ def update_note(note_id):
         except Exception as e:
             return jsonify({'error': 'Invalid note ID format'}), 400
 
-        # Get existing note to verify cabinet_id
+        # Get existing note to verify cabinet_id and preserve data
         existing_note = current_app.db.notes.find_one({'_id': ObjectId(note_id)})
         
         if not existing_note:
@@ -177,40 +179,44 @@ def update_note(note_id):
         # Build update data carefully
         update_data = {}
         
-        # Add title if present
-        if 'title' in note_data:
-            update_data['title'] = note_data['title']
-            
-        # Add order if present
-        if 'order' in note_data:
+        # If this is just an order update, preserve all existing data
+        if set(note_data.keys()) == {'order'}:
+            # Copy all existing note data
+            update_data = {k: v for k, v in existing_note.items() if k != '_id'}
+            # Update only the order
             update_data['order'] = note_data['order']
-            
-        # Add type if present
-        if 'type' in note_data:
-            update_data['type'] = note_data['type']
-            
-        # Add isExpanded if present
-        if 'isExpanded' in note_data:
-            update_data['isExpanded'] = note_data['isExpanded']
-            
-        # Keep existing cabinet_id
-        update_data['cabinet_id'] = existing_note['cabinet_id']
-
-        # Handle content based on note type
-        note_type = note_data.get('type', existing_note.get('type', 'standard'))
-        if note_type == 'task':
-            if 'tasks' in note_data:
-                update_data['tasks'] = note_data['tasks']
-        elif note_type == 'calendar':
-            if 'viewType' in note_data:
-                update_data['viewType'] = note_data['viewType']
-            if 'calendarData' in note_data:
-                update_data['calendarData'] = note_data['calendarData']
-            if 'views' in note_data:
-                update_data['views'] = note_data['views']
         else:
-            if 'content' in note_data:
-                update_data['content'] = sanitize_html(note_data['content'])
+            # Handle normal update logic
+            if 'title' in note_data:
+                update_data['title'] = note_data['title']
+                
+            if 'order' in note_data:
+                update_data['order'] = note_data['order']
+                
+            if 'type' in note_data:
+                update_data['type'] = note_data['type']
+                
+            if 'isExpanded' in note_data:
+                update_data['isExpanded'] = note_data['isExpanded']
+                
+            # Keep existing cabinet_id
+            update_data['cabinet_id'] = existing_note['cabinet_id']
+
+            # Handle content based on note type
+            note_type = note_data.get('type', existing_note.get('type', 'standard'))
+            if note_type == 'task':
+                if 'tasks' in note_data:
+                    update_data['tasks'] = note_data['tasks']
+            elif note_type == 'calendar':
+                if 'viewType' in note_data:
+                    update_data['viewType'] = note_data['viewType']
+                if 'calendarData' in note_data:
+                    update_data['calendarData'] = note_data['calendarData']
+                if 'views' in note_data:
+                    update_data['views'] = note_data['views']
+            else:
+                if 'content' in note_data:
+                    update_data['content'] = sanitize_html(note_data['content'])
         
         # Perform the update
         result = current_app.db.notes.update_one(

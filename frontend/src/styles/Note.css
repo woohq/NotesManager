@@ -14,7 +14,8 @@
 
 /* Note wrapper - Draggable container */
 .note-wrapper {
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease;
+  transform-origin: center center;
 }
 
 .note-wrapper.is-dragging {
@@ -25,7 +26,6 @@
   background-color: white;
   border-color: #3b82f6;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: scale(1.02);
 }
 
 /* Note header */
@@ -122,75 +122,6 @@
   background: transparent;
   resize: none;
   overflow: hidden;
-}
-
-/* TipTap Editor Styles */
-.ProseMirror {
-  height: 100%;
-  min-height: inherit;
-  font-family: inherit;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  color: #4b5563;
-}
-
-.ProseMirror:focus {
-  outline: none;
-  background-color: transparent;
-}
-
-.ProseMirror p {
-  margin: 0;
-  padding: 0;
-}
-
-.ProseMirror ul,
-.ProseMirror ol {
-  padding-left: 1.5em;
-  margin: 0.5em 0;
-}
-
-.ProseMirror blockquote {
-  border-left: 3px solid #e5e7eb;
-  padding-left: 1em;
-  margin: 0.5em 0;
-  color: #6b7280;
-}
-
-.ProseMirror code {
-  background-color: #f3f4f6;
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-family: monospace;
-}
-
-.ProseMirror pre {
-  background-color: #f3f4f6;
-  padding: 0.75em 1em;
-  border-radius: 6px;
-  font-family: monospace;
-  margin: 0.5em 0;
-}
-
-.ProseMirror pre code {
-  background-color: transparent;
-  padding: 0;
-}
-
-/* Expansion animation */
-.note.expanded .note-content {
-  animation: expandContent 0.2s ease;
-}
-
-@keyframes expandContent {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Focus states */
