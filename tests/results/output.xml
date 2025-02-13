@@ -1,0 +1,3453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.1.1 (Python 3.11.11 on darwin)" generated="2025-02-13T18:10:45.435220" rpa="false" schemaversion="5">
+<suite id="s1" name="Standard Note Tests" source="/Users/quan/git/NotesManager/tests/robot/standard_note_tests.robot">
+<kw name="Initialize Test Environment" owner="common" type="SETUP">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:45.613782" level="INFO">${options} = &lt;selenium.webdriver.chrome.options.Options object at 0x10784b1d0&gt;</msg>
+<var>${options}</var>
+<arg>selenium.webdriver.ChromeOptions()</arg>
+<arg>modules=selenium.webdriver</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:45.613625" elapsed="0.000176"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--no-sandbox</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="PASS" start="2025-02-13T18:10:45.613871" elapsed="0.000062"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-dev-shm-usage</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="PASS" start="2025-02-13T18:10:45.613987" elapsed="0.000052"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${HEADLESS}</arg>
+<arg>Call Method</arg>
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--headless</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:10:45.614095" elapsed="0.000048"/>
+</kw>
+<kw name="Create Webdriver" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:45.614276" level="INFO">Creating an instance of the Chrome WebDriver.</msg>
+<arg>Chrome</arg>
+<arg>options=${options}</arg>
+<doc>Creates an instance of Selenium WebDriver.</doc>
+<status status="PASS" start="2025-02-13T18:10:45.614193" elapsed="1.250395"/>
+</kw>
+<kw name="Set Window Size" owner="SeleniumLibrary">
+<arg>1920</arg>
+<arg>1080</arg>
+<doc>Sets current windows size to given ``width`` and ``height``.</doc>
+<status status="PASS" start="2025-02-13T18:10:46.864980" elapsed="0.383140"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SeleniumLibrary">
+<arg>0.0s</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.248342" elapsed="0.000282"/>
+</kw>
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.249138" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.248996" elapsed="0.000225"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.259793" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.249467" elapsed="0.010355"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:10:47.259905" elapsed="0.000069"/>
+</return>
+<msg time="2025-02-13T18:10:47.260080" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:10:47.249349" elapsed="0.010746"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.262941" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.260403" elapsed="0.002563"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.267963" level="INFO">${cabinets_result} = DeleteResult({'n': 0, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.263054" elapsed="0.004930"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.268795" level="INFO">${notes_result} = DeleteResult({'n': 0, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.268082" elapsed="0.000753"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.269282" level="INFO">Deleted 0 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.268903" elapsed="0.000428"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.269672" level="INFO">Deleted 0 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.269395" elapsed="0.000309"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:10:47.260237" elapsed="0.009508"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.270086" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.269959" elapsed="0.000142"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.272124" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.270162" elapsed="0.001978"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.272331" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.272213" elapsed="0.000156"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.273406" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.272429" elapsed="0.000992"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.273581" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.273482" elapsed="0.000126"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.273726" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.273664" elapsed="0.000150"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:10:47.269834" elapsed="0.004019"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.274090" elapsed="0.000541"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:10:47.273921" elapsed="0.000763"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.274828" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.274752" elapsed="0.000112"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:10:47.248794" elapsed="0.026108"/>
+</kw>
+<doc>Sets up the test environment including browser and database</doc>
+<status status="PASS" start="2025-02-13T18:10:45.613128" elapsed="1.661805"/>
+</kw>
+<test id="s1-t1" name="Basic Text Input" line="38">
+<kw name="Reset Test Environment" owner="common" type="SETUP">
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.275720" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.275647" elapsed="0.000111"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.277489" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.275955" elapsed="0.001551"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:10:47.277544" elapsed="0.000029"/>
+</return>
+<msg time="2025-02-13T18:10:47.277646" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:10:47.275848" elapsed="0.001811"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.278117" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.277987" elapsed="0.000144"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.284260" level="INFO">${cabinets_result} = DeleteResult({'n': 0, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.278190" elapsed="0.006092"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.284886" level="INFO">${notes_result} = DeleteResult({'n': 0, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.284373" elapsed="0.000532"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.285309" level="INFO">Deleted 0 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.284982" elapsed="0.000375"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.285682" level="INFO">Deleted 0 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.285418" elapsed="0.000304"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:10:47.277739" elapsed="0.008024"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.286097" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.285979" elapsed="0.000132"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.287531" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.286168" elapsed="0.001381"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.287720" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.287612" elapsed="0.000139"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.288399" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.287808" elapsed="0.000605"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.288563" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.288470" elapsed="0.000123"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.288702" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.288648" elapsed="0.000086"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:10:47.285851" elapsed="0.002916"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.288981" elapsed="0.000363"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:10:47.288832" elapsed="0.000548"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:47.289489" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.289432" elapsed="0.000140"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:10:47.275528" elapsed="0.014077"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:47.289736" level="INFO">Opening url 'http://localhost:3000'</msg>
+<arg>${FRONTEND_URL}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.289665" elapsed="0.211500"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.app-container</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.501380" elapsed="0.025382"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:47.746204" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-295.png"&gt;&lt;img src="selenium-screenshot-295.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:10:47.746309" level="FAIL">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</msg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:10:47.527024" elapsed="0.221910">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</status>
+</kw>
+<msg time="2025-02-13T18:10:47.749042" level="INFO">${overlay_present} = False</msg>
+<var>${overlay_present}</var>
+<arg>Element Should Be Visible</arg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.526908" elapsed="0.222147"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${overlay_present}</arg>
+<arg>Press Keys</arg>
+<arg>None</arg>
+<arg>ESC</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.749173" elapsed="0.000089"/>
+</kw>
+<doc>Resets the test environment between tests</doc>
+<status status="PASS" start="2025-02-13T18:10:47.275367" elapsed="0.473936"/>
+</kw>
+<kw name="Create New Cabinet" owner="common">
+<kw name="Wait Until Element Is Not Visible" owner="SeleniumLibrary">
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is not visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.749592" elapsed="0.003806"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.753501" elapsed="0.014292"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:47.768043" level="INFO">Clicking element 'xpath=//*[@data-testid='cabinet-selector']'.</msg>
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.767927" elapsed="0.053743"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.821800" elapsed="0.010979"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:47.833026" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']'.</msg>
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.832913" elapsed="0.056022"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.889165" elapsed="0.010398"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:47.899906" level="INFO">Typing text 'Test Cabinet' into text field 'css=input[placeholder='Cabinet name']'.</msg>
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>${cabinet_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:47.899709" elapsed="0.126943"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:48.026789" elapsed="0.014256"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:48.041335" level="INFO">Clicking element 'xpath=//button[@type='submit'][text()='Create Cabinet']'.</msg>
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:48.041203" elapsed="0.032316"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:10:48.576061" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:10:48.073920" elapsed="0.502261"/>
+</kw>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:10:48.073728" elapsed="0.502552"/>
+</kw>
+<arg>${TEST_CABINET_NAME}</arg>
+<doc>Creates a new cabinet with the given name</doc>
+<status status="PASS" start="2025-02-13T18:10:47.749451" elapsed="0.826870"/>
+</kw>
+<kw name="Wait Until Cabinet List Updates" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:10:49.079459" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:10:48.576951" elapsed="0.502825"/>
+</kw>
+<doc>Waits for the cabinet list to update after an operation</doc>
+<status status="PASS" start="2025-02-13T18:10:48.576537" elapsed="0.503502"/>
+</kw>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:49.081500" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:49.081273" elapsed="0.050558"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:49.131996" elapsed="0.012462"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:49.144751" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:49.144603" elapsed="0.036317"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:49.181051" elapsed="0.241286"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:10:50.425138" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:10:49.422469" elapsed="1.003128"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:50.427295" level="INFO">Typing text 'Test Note' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:50.427000" elapsed="0.085263"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:10:50.425983" elapsed="0.086350"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:50.512956" level="INFO">Typing text 'This is a test note content' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:50.512842" elapsed="0.060869"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:10:50.512450" elapsed="0.061338"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:50.574188" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:10:50.849382" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:10:50.849439" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:10:50.573909" elapsed="0.279214"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:10:51.855784" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:10:50.853443" elapsed="1.002609"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:10:50.853266" elapsed="1.003030"/>
+</kw>
+<arg>${TEST_NOTE_TITLE}</arg>
+<arg>${TEST_NOTE_CONTENT}</arg>
+<status status="PASS" start="2025-02-13T18:10:49.080779" elapsed="2.775688"/>
+</kw>
+<kw name="Element Should Contain" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:51.874655" level="INFO">Element 'css=.ProseMirror[contenteditable="true"]' contains text 'This is a test note content'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${TEST_NOTE_CONTENT}</arg>
+<doc>Verifies that element ``locator`` contains text ``expected``.</doc>
+<status status="PASS" start="2025-02-13T18:10:51.857300" elapsed="0.017448"/>
+</kw>
+<kw name="Wait Until Element Contains" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:57.136223" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-296.png"&gt;&lt;img src="selenium-screenshot-296.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:10:57.136346" level="FAIL">Element with locator 'css=div[data-testid="note-title"]' not found.</msg>
+<arg>${TITLE_DISPLAY}</arg>
+<arg>${TEST_NOTE_TITLE}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` contains ``text``.</doc>
+<status status="FAIL" start="2025-02-13T18:10:51.874977" elapsed="5.262058">Element with locator 'css=div[data-testid="note-title"]' not found.</status>
+</kw>
+<kw name="Verify Database State" owner="common">
+<arg>1</arg>
+<arg>1</arg>
+<doc>Verifies the current state of the database</doc>
+<status status="NOT RUN" start="2025-02-13T18:10:57.137255" elapsed="0.000025"/>
+</kw>
+<doc>Test basic text input functionality in standard notes</doc>
+<tag>content</tag>
+<tag>smoke</tag>
+<tag>standard</tag>
+<status status="FAIL" start="2025-02-13T18:10:47.275006" elapsed="9.862393">Element with locator 'css=div[data-testid="note-title"]' not found.</status>
+</test>
+<test id="s1-t2" name="Content Auto Save" line="50">
+<kw name="Reset Test Environment" owner="common" type="SETUP">
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.138247" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.137980" elapsed="0.000312"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.139702" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.138536" elapsed="0.001192"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:10:57.139808" elapsed="0.000036"/>
+</return>
+<msg time="2025-02-13T18:10:57.139944" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:10:57.138378" elapsed="0.001580"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.140385" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.140236" elapsed="0.000162"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.145715" level="INFO">${cabinets_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.140496" elapsed="0.005247"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.147320" level="INFO">${notes_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.145863" elapsed="0.001488"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.147804" level="INFO">Deleted 1 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.147460" elapsed="0.000398"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.148186" level="INFO">Deleted 1 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.147925" elapsed="0.000352"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:10:57.140046" elapsed="0.008287"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.149091" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.148576" elapsed="0.000533"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.150505" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.149193" elapsed="0.001336"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.150748" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.150617" elapsed="0.000161"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.151864" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.150834" elapsed="0.001046"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.152075" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.151963" elapsed="0.000180"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.152306" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.152228" elapsed="0.000109"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:10:57.148434" elapsed="0.003932"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.152535" elapsed="0.000404"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:10:57.152423" elapsed="0.000577"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:10:57.153171" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.153079" elapsed="0.000168"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:10:57.137881" elapsed="0.015419"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:57.153443" level="INFO">Opening url 'http://localhost:3000'</msg>
+<arg>${FRONTEND_URL}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.153367" elapsed="0.129377"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.app-container</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.282885" elapsed="0.012748"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:57.458218" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-297.png"&gt;&lt;img src="selenium-screenshot-297.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:10:57.458310" level="FAIL">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</msg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:10:57.295877" elapsed="0.162722">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</status>
+</kw>
+<msg time="2025-02-13T18:10:57.458686" level="INFO">${overlay_present} = False</msg>
+<var>${overlay_present}</var>
+<arg>Element Should Be Visible</arg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.295770" elapsed="0.162928"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${overlay_present}</arg>
+<arg>Press Keys</arg>
+<arg>None</arg>
+<arg>ESC</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.458795" elapsed="0.000070"/>
+</kw>
+<doc>Resets the test environment between tests</doc>
+<status status="PASS" start="2025-02-13T18:10:57.137744" elapsed="0.321155"/>
+</kw>
+<kw name="Create New Cabinet" owner="common">
+<kw name="Wait Until Element Is Not Visible" owner="SeleniumLibrary">
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is not visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.459144" elapsed="0.003666"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.462903" elapsed="0.008737"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:57.471881" level="INFO">Clicking element 'xpath=//*[@data-testid='cabinet-selector']'.</msg>
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.471769" elapsed="0.034066"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.505962" elapsed="0.008392"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:57.514609" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']'.</msg>
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.514488" elapsed="0.036599"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.551227" elapsed="0.008481"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:57.559978" level="INFO">Typing text 'Test Cabinet' into text field 'css=input[placeholder='Cabinet name']'.</msg>
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>${cabinet_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.559825" elapsed="0.047609"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.607662" elapsed="0.007588"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:57.615546" level="INFO">Clicking element 'xpath=//button[@type='submit'][text()='Create Cabinet']'.</msg>
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.615423" elapsed="0.033621"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:10:58.150083" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:10:57.649366" elapsed="0.500924"/>
+</kw>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:10:57.649198" elapsed="0.501266"/>
+</kw>
+<arg>${TEST_CABINET_NAME}</arg>
+<doc>Creates a new cabinet with the given name</doc>
+<status status="PASS" start="2025-02-13T18:10:57.459016" elapsed="0.691505"/>
+</kw>
+<kw name="Wait Until Cabinet List Updates" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:10:58.653512" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:10:58.151266" elapsed="0.502677"/>
+</kw>
+<doc>Waits for the cabinet list to update after an operation</doc>
+<status status="PASS" start="2025-02-13T18:10:58.150898" elapsed="0.503405"/>
+</kw>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:58.656539" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:58.656041" elapsed="0.050618"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:58.706826" elapsed="0.225298"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:58.932478" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:58.932291" elapsed="0.032685"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:10:58.965116" elapsed="0.016035"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:10:59.982180" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:10:58.981332" elapsed="1.001092"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:10:59.984229" level="INFO">Typing text 'Initial Title' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:10:59.983944" elapsed="0.076213"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:10:59.982818" elapsed="0.077404"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:00.060801" level="INFO">Typing text 'Initial Content' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:00.060689" elapsed="0.052838"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:00.060325" elapsed="0.053271"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:00.113944" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:00.396067" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:00.396230" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:00.113696" elapsed="0.289882"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:01.406573" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:00.404279" elapsed="1.002848"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:00.403905" elapsed="1.003684"/>
+</kw>
+<arg>Initial Title</arg>
+<arg>Initial Content</arg>
+<status status="PASS" start="2025-02-13T18:10:58.655057" elapsed="2.752748"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:01.408784" elapsed="0.019507"/>
+</kw>
+<kw name="Clear Element Text" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<doc>Clears the value of the text-input-element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:01.428640" elapsed="0.024328"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:01.453376" level="INFO">Typing text 'Updated Content' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>Updated Content</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:01.453191" elapsed="0.048185"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:01.501797" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:01.772337" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:01.772490" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:01.501554" elapsed="0.277446"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:03.781282" level="INFO">Slept 2 seconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:01.779825" elapsed="2.002004"/>
+</kw>
+<arg>2s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:01.779441" elapsed="2.002863"/>
+</kw>
+<kw name="Reload Page" owner="SeleniumLibrary">
+<doc>Simulates user reloading page.</doc>
+<status status="PASS" start="2025-02-13T18:11:03.783257" elapsed="0.140880"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:03.924341" elapsed="0.221419"/>
+</kw>
+<kw name="Element Should Contain" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:04.155635" level="INFO">Element 'css=.ProseMirror[contenteditable="true"]' contains text 'Updated Content'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>Updated Content</arg>
+<doc>Verifies that element ``locator`` contains text ``expected``.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.146439" elapsed="0.009267"/>
+</kw>
+<kw name="Verify Database State" owner="common">
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.157309" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.156259" elapsed="0.001070"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:04.157374" elapsed="0.000031"/>
+</return>
+<msg time="2025-02-13T18:11:04.157478" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:04.156105" elapsed="0.001386"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.157706" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.157560" elapsed="0.000159"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.162472" level="INFO">${cabinet_count} = 1</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.157774" elapsed="0.004736"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.163599" level="INFO">${notes_count} = 1</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.162617" elapsed="0.001005"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.163821" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>${expected_cabinets}</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.163717" elapsed="0.000134"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.163974" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>${expected_notes}</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.163906" elapsed="0.000093"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.164215" elapsed="0.000436"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:04.164073" elapsed="0.000618"/>
+</kw>
+<arg>1</arg>
+<arg>1</arg>
+<doc>Verifies the current state of the database</doc>
+<status status="PASS" start="2025-02-13T18:11:04.155891" elapsed="0.008828"/>
+</kw>
+<doc>Verify content saves automatically after changes</doc>
+<tag>autosave</tag>
+<tag>content</tag>
+<tag>standard</tag>
+<status status="PASS" start="2025-02-13T18:10:57.137543" elapsed="7.027293"/>
+</test>
+<test id="s1-t3" name="Content Persistence After Refresh" line="70">
+<kw name="Reset Test Environment" owner="common" type="SETUP">
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.165824" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.165739" elapsed="0.000151"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.167102" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.166178" elapsed="0.000943"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:04.167169" elapsed="0.000031"/>
+</return>
+<msg time="2025-02-13T18:11:04.167278" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:04.166027" elapsed="0.001263"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.167688" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.167518" elapsed="0.000184"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.171709" level="INFO">${cabinets_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.167755" elapsed="0.003980"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.172521" level="INFO">${notes_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.171838" elapsed="0.000701"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.172898" level="INFO">Deleted 1 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.172619" elapsed="0.000323"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.173233" level="INFO">Deleted 1 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.172999" elapsed="0.000263"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:11:04.167379" elapsed="0.005920"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.173614" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.173496" elapsed="0.000131"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.175014" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.173730" elapsed="0.001316"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.175365" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.175239" elapsed="0.000160"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.177462" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.175475" elapsed="0.002004"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.177713" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.177575" elapsed="0.000170"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.177859" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.177804" elapsed="0.000095"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:11:04.173374" elapsed="0.004561"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.178195" elapsed="0.014318"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:04.178008" elapsed="0.014594"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:04.192864" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.192728" elapsed="0.000182"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:11:04.165466" elapsed="0.027478"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:04.193098" level="INFO">Opening url 'http://localhost:3000'</msg>
+<arg>${FRONTEND_URL}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.193018" elapsed="0.115736"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.app-container</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.308897" elapsed="0.010530"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:04.478311" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-298.png"&gt;&lt;img src="selenium-screenshot-298.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:04.478400" level="FAIL">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</msg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:11:04.319675" elapsed="0.158977">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</status>
+</kw>
+<msg time="2025-02-13T18:11:04.478721" level="INFO">${overlay_present} = False</msg>
+<var>${overlay_present}</var>
+<arg>Element Should Be Visible</arg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.319559" elapsed="0.159172"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${overlay_present}</arg>
+<arg>Press Keys</arg>
+<arg>None</arg>
+<arg>ESC</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.478819" elapsed="0.000068"/>
+</kw>
+<doc>Resets the test environment between tests</doc>
+<status status="PASS" start="2025-02-13T18:11:04.165302" elapsed="0.313618"/>
+</kw>
+<kw name="Create New Cabinet" owner="common">
+<kw name="Wait Until Element Is Not Visible" owner="SeleniumLibrary">
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is not visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.479166" elapsed="0.005370"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.484653" elapsed="0.008528"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:04.493404" level="INFO">Clicking element 'xpath=//*[@data-testid='cabinet-selector']'.</msg>
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.493301" elapsed="0.031249"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.524679" elapsed="0.220785"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:04.745858" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']'.</msg>
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.745679" elapsed="0.039661"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.785472" elapsed="0.011130"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:04.796853" level="INFO">Typing text 'Test Cabinet' into text field 'css=input[placeholder='Cabinet name']'.</msg>
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>${cabinet_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.796715" elapsed="0.046061"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.842899" elapsed="0.007759"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:04.850905" level="INFO">Clicking element 'xpath=//button[@type='submit'][text()='Create Cabinet']'.</msg>
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.850800" elapsed="0.030692"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:05.383591" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:04.881924" elapsed="0.501773"/>
+</kw>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:04.881747" elapsed="0.502034"/>
+</kw>
+<arg>${TEST_CABINET_NAME}</arg>
+<doc>Creates a new cabinet with the given name</doc>
+<status status="PASS" start="2025-02-13T18:11:04.479034" elapsed="0.904785"/>
+</kw>
+<kw name="Wait Until Cabinet List Updates" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:05.885879" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:05.384221" elapsed="0.502153"/>
+</kw>
+<doc>Waits for the cabinet list to update after an operation</doc>
+<status status="PASS" start="2025-02-13T18:11:05.384006" elapsed="0.502793"/>
+</kw>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:05.888767" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:05.888475" elapsed="0.050342"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:05.938959" elapsed="0.221475"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:06.160721" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:06.160578" elapsed="0.030282"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:06.191000" elapsed="0.017314"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:07.209934" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:06.208457" elapsed="1.001654"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:07.211759" level="INFO">Typing text 'Test Note' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:07.211483" elapsed="0.065348"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:07.210399" elapsed="0.066500"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:07.277490" level="INFO">Typing text 'This is a test note content' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:07.277373" elapsed="0.054953"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:07.277003" elapsed="0.055386"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:07.332713" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:07.605198" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:07.605328" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:07.332483" elapsed="0.278604"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.613670" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:07.611769" elapsed="1.002232"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:07.611419" elapsed="1.002761"/>
+</kw>
+<arg>${TEST_NOTE_TITLE}</arg>
+<arg>${TEST_NOTE_CONTENT}</arg>
+<status status="PASS" start="2025-02-13T18:11:05.887731" elapsed="2.726533"/>
+</kw>
+<kw name="Reload Page" owner="SeleniumLibrary">
+<doc>Simulates user reloading page.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.614643" elapsed="0.014965"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.630212" elapsed="0.345472"/>
+</kw>
+<kw name="Element Should Contain" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:08.985104" level="INFO">Element 'css=.ProseMirror[contenteditable="true"]' contains text 'This is a test note content'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${TEST_NOTE_CONTENT}</arg>
+<doc>Verifies that element ``locator`` contains text ``expected``.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.975879" elapsed="0.009295"/>
+</kw>
+<kw name="Verify Database State" owner="common">
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.986765" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.985684" elapsed="0.001120"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:08.986847" elapsed="0.000032"/>
+</return>
+<msg time="2025-02-13T18:11:08.986951" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:08.985560" elapsed="0.001405"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.987180" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.987033" elapsed="0.000160"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.991085" level="INFO">${cabinet_count} = 1</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.987250" elapsed="0.003862"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.992213" level="INFO">${notes_count} = 1</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.991265" elapsed="0.001027"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.992482" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>${expected_cabinets}</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.992381" elapsed="0.000134"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.992635" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>${expected_notes}</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.992570" elapsed="0.000088"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.992912" elapsed="0.000451"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:08.992757" elapsed="0.000647"/>
+</kw>
+<arg>1</arg>
+<arg>1</arg>
+<doc>Verifies the current state of the database</doc>
+<status status="PASS" start="2025-02-13T18:11:08.985373" elapsed="0.008062"/>
+</kw>
+<doc>Test content persistence after page refresh</doc>
+<tag>content</tag>
+<tag>persistence</tag>
+<tag>standard</tag>
+<status status="PASS" start="2025-02-13T18:11:04.165045" elapsed="4.828476"/>
+</test>
+<test id="s1-t4" name="Empty Title Shows Untitled" line="83">
+<kw name="Reset Test Environment" owner="common" type="SETUP">
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.994125" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.994059" elapsed="0.000094"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.995247" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.994313" elapsed="0.000950"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:08.995298" elapsed="0.000026"/>
+</return>
+<msg time="2025-02-13T18:11:08.995388" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:08.994223" elapsed="0.001177"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.995690" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.995577" elapsed="0.000126"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:08.999146" level="INFO">${cabinets_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.995755" elapsed="0.003414"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.009954" level="INFO">${notes_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:08.999260" elapsed="0.010718"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.010419" level="INFO">Deleted 1 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.010087" elapsed="0.000375"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.010752" level="INFO">Deleted 1 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.010521" elapsed="0.000260"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:11:08.995464" elapsed="0.015358"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.011177" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.011039" elapsed="0.000154"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.012319" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.011247" elapsed="0.001085"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.012478" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.012385" elapsed="0.000119"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.013132" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.012557" elapsed="0.000587"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.013276" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.013195" elapsed="0.000104"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.013424" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.013349" elapsed="0.000114"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:11:09.010908" elapsed="0.002596"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.013721" elapsed="0.000485"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:09.013571" elapsed="0.000727"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:09.014445" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.014368" elapsed="0.000114"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:11:08.993968" elapsed="0.020548"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:09.014761" level="INFO">Opening url 'http://localhost:3000'</msg>
+<arg>${FRONTEND_URL}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.014641" elapsed="0.115204"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.app-container</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.129983" elapsed="0.011764"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:09.310749" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-299.png"&gt;&lt;img src="selenium-screenshot-299.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:09.310829" level="FAIL">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</msg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:11:09.141990" elapsed="0.169095">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</status>
+</kw>
+<msg time="2025-02-13T18:11:09.311153" level="INFO">${overlay_present} = False</msg>
+<var>${overlay_present}</var>
+<arg>Element Should Be Visible</arg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.141885" elapsed="0.169279"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${overlay_present}</arg>
+<arg>Press Keys</arg>
+<arg>None</arg>
+<arg>ESC</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.311253" elapsed="0.000065"/>
+</kw>
+<doc>Resets the test environment between tests</doc>
+<status status="PASS" start="2025-02-13T18:11:08.993857" elapsed="0.317496"/>
+</kw>
+<kw name="Create New Cabinet" owner="common">
+<kw name="Wait Until Element Is Not Visible" owner="SeleniumLibrary">
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is not visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.311597" elapsed="0.003679"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.315412" elapsed="0.008687"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:09.324342" level="INFO">Clicking element 'xpath=//*[@data-testid='cabinet-selector']'.</msg>
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.324229" elapsed="0.031729"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.356104" elapsed="0.225562"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:09.582184" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']'.</msg>
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.581946" elapsed="0.039144"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.621226" elapsed="0.008553"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:09.630032" level="INFO">Typing text 'Test Cabinet' into text field 'css=input[placeholder='Cabinet name']'.</msg>
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>${cabinet_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.629898" elapsed="0.046835"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.676867" elapsed="0.007673"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:09.684827" level="INFO">Clicking element 'xpath=//button[@type='submit'][text()='Create Cabinet']'.</msg>
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.684700" elapsed="0.027770"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:10.213445" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:09.712747" elapsed="0.500860"/>
+</kw>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:09.712598" elapsed="0.501133"/>
+</kw>
+<arg>${TEST_CABINET_NAME}</arg>
+<doc>Creates a new cabinet with the given name</doc>
+<status status="PASS" start="2025-02-13T18:11:09.311467" elapsed="0.902319"/>
+</kw>
+<kw name="Wait Until Cabinet List Updates" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:10.716588" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:10.214393" elapsed="0.502666"/>
+</kw>
+<doc>Waits for the cabinet list to update after an operation</doc>
+<status status="PASS" start="2025-02-13T18:11:10.214072" elapsed="0.503362"/>
+</kw>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:10.722014" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:10.721573" elapsed="0.053181"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:10.774913" elapsed="0.008786"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:10.783970" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:10.783832" elapsed="0.028262"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:10.812270" elapsed="0.016821"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:11.829538" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:10.829207" elapsed="1.000416"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:11.829765" elapsed="0.000412"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:11.830749" level="INFO">Typing text 'This is a test note content' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:11.830621" elapsed="0.086833"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:11.830270" elapsed="0.087252"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:11.917913" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:12.194010" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:12.194186" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:11.917624" elapsed="0.284329"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:13.204094" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:12.202665" elapsed="1.001897"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:12.202276" elapsed="1.002652"/>
+</kw>
+<arg>content=${TEST_NOTE_CONTENT}</arg>
+<status status="PASS" start="2025-02-13T18:11:10.718598" elapsed="2.486475"/>
+</kw>
+<kw name="Wait Until Element Contains" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:18.512029" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-300.png"&gt;&lt;img src="selenium-screenshot-300.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:18.512111" level="FAIL">Element with locator 'css=div[data-testid="note-title"]' not found.</msg>
+<arg>${TITLE_DISPLAY}</arg>
+<arg>Untitled</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` contains ``text``.</doc>
+<status status="FAIL" start="2025-02-13T18:11:13.205829" elapsed="5.306488">Element with locator 'css=div[data-testid="note-title"]' not found.</status>
+</kw>
+<kw name="Reload Page" owner="SeleniumLibrary">
+<doc>Simulates user reloading page.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:18.512458" elapsed="0.000016"/>
+</kw>
+<kw name="Wait Until Element Contains" owner="SeleniumLibrary">
+<arg>${TITLE_DISPLAY}</arg>
+<arg>Untitled</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` contains ``text``.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:18.512536" elapsed="0.000012"/>
+</kw>
+<kw name="Verify Database State" owner="common">
+<arg>1</arg>
+<arg>1</arg>
+<doc>Verifies the current state of the database</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:18.512638" elapsed="0.000014"/>
+</kw>
+<doc>Verify "Untitled" appears when title is empty</doc>
+<tag>standard</tag>
+<tag>title</tag>
+<status status="FAIL" start="2025-02-13T18:11:08.993650" elapsed="9.519087">Element with locator 'css=div[data-testid="note-title"]' not found.</status>
+</test>
+<test id="s1-t5" name="Edit And Save Empty Fields" line="98">
+<kw name="Reset Test Environment" owner="common" type="SETUP">
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.513264" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.513201" elapsed="0.000089"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.514839" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.513432" elapsed="0.001420"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:18.514881" elapsed="0.000023"/>
+</return>
+<msg time="2025-02-13T18:11:18.514958" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:18.513351" elapsed="0.001618"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.515219" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.515116" elapsed="0.000114"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.517895" level="INFO">${cabinets_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.515274" elapsed="0.002634"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.518395" level="INFO">${notes_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.517959" elapsed="0.000447"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.518726" level="INFO">Deleted 1 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.518452" elapsed="0.000314"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.519049" level="INFO">Deleted 1 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.518829" elapsed="0.000247"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:11:18.515023" elapsed="0.004086"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.519399" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.519291" elapsed="0.000349"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.520691" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.519696" elapsed="0.001008"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.520840" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.520755" elapsed="0.000108"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.521760" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.520909" elapsed="0.000862"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.521885" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.521815" elapsed="0.000090"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.521991" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.521949" elapsed="0.000071"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:11:18.519179" elapsed="0.002870"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.522201" elapsed="0.001201"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:18.522101" elapsed="0.001341"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:18.523556" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.523496" elapsed="0.000086"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:11:18.513128" elapsed="0.010484"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:18.523724" level="INFO">Opening url 'http://localhost:3000'</msg>
+<arg>${FRONTEND_URL}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.523661" elapsed="0.114802"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.app-container</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.638585" elapsed="0.011412"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:18.812850" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-301.png"&gt;&lt;img src="selenium-screenshot-301.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:18.812938" level="FAIL">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</msg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:11:18.650263" elapsed="0.162927">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</status>
+</kw>
+<msg time="2025-02-13T18:11:18.813260" level="INFO">${overlay_present} = False</msg>
+<var>${overlay_present}</var>
+<arg>Element Should Be Visible</arg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.650158" elapsed="0.163113"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${overlay_present}</arg>
+<arg>Press Keys</arg>
+<arg>None</arg>
+<arg>ESC</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.813362" elapsed="0.000067"/>
+</kw>
+<doc>Resets the test environment between tests</doc>
+<status status="PASS" start="2025-02-13T18:11:18.513021" elapsed="0.300443"/>
+</kw>
+<kw name="Create New Cabinet" owner="common">
+<kw name="Wait Until Element Is Not Visible" owner="SeleniumLibrary">
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is not visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.813712" elapsed="0.004176"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.818001" elapsed="0.008434"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:18.826657" level="INFO">Clicking element 'xpath=//*[@data-testid='cabinet-selector']'.</msg>
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.826555" elapsed="0.032112"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.858801" elapsed="0.008863"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:18.867977" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']'.</msg>
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.867795" elapsed="0.039812"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:18.907753" elapsed="0.222557"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:19.130591" level="INFO">Typing text 'Test Cabinet' into text field 'css=input[placeholder='Cabinet name']'.</msg>
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>${cabinet_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:19.130442" elapsed="0.045830"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:19.176392" elapsed="0.007406"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:19.184083" level="INFO">Clicking element 'xpath=//button[@type='submit'][text()='Create Cabinet']'.</msg>
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:19.183975" elapsed="0.028034"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:19.713437" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:19.212311" elapsed="0.501332"/>
+</kw>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:19.212149" elapsed="0.501637"/>
+</kw>
+<arg>${TEST_CABINET_NAME}</arg>
+<doc>Creates a new cabinet with the given name</doc>
+<status status="PASS" start="2025-02-13T18:11:18.813583" elapsed="0.900248"/>
+</kw>
+<kw name="Wait Until Cabinet List Updates" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:20.216489" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:19.714726" elapsed="0.502167"/>
+</kw>
+<doc>Waits for the cabinet list to update after an operation</doc>
+<status status="PASS" start="2025-02-13T18:11:19.714178" elapsed="0.503077"/>
+</kw>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:20.221373" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:20.220837" elapsed="0.054012"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:20.274994" elapsed="0.008298"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:20.283660" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:20.283486" elapsed="0.032231"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:20.315842" elapsed="0.229168"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:21.547821" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:20.545162" elapsed="1.003188"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:21.551929" level="INFO">Typing text 'Initial Title' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:21.551342" elapsed="0.071930"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:21.549306" elapsed="0.074035"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:21.623943" level="INFO">Typing text 'Initial Content' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:21.623825" elapsed="0.053919"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:21.623447" elapsed="0.054362"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:21.678136" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:21.950842" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:21.950998" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:21.677903" elapsed="0.279809"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:22.959265" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:21.958430" elapsed="1.001027"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:21.958072" elapsed="1.001562"/>
+</kw>
+<arg>Initial Title</arg>
+<arg>Initial Content</arg>
+<status status="PASS" start="2025-02-13T18:11:20.219781" elapsed="2.739954"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:22.960097" elapsed="0.011397"/>
+</kw>
+<kw name="Clear Element Text" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<doc>Clears the value of the text-input-element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:22.971681" elapsed="0.015236"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:22.987388" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:23.255410" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:23.255467" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:22.987110" elapsed="0.272786"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.260741" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:23.260308" elapsed="1.000691"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:23.260113" elapsed="1.001089"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:24.261958" level="INFO">Clicking element 'css=div[data-testid="note-title"]'.</msg>
+<msg time="2025-02-13T18:11:24.440062" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-302.png"&gt;&lt;img src="selenium-screenshot-302.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:24.440157" level="FAIL">Element with locator 'css=div[data-testid="note-title"]' not found.</msg>
+<arg>${TITLE_DISPLAY}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="FAIL" start="2025-02-13T18:11:24.261550" elapsed="0.178883">Element with locator 'css=div[data-testid="note-title"]' not found.</status>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>${EMPTY}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:24.440707" elapsed="0.000020"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:24.440976" elapsed="0.000023"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:24.441099" elapsed="0.000016"/>
+</kw>
+<kw name="Element Should Not Contain" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>Initial Content</arg>
+<doc>Verifies that element ``locator`` does not contain text ``expected``.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:24.441174" elapsed="0.000011"/>
+</kw>
+<kw name="Wait Until Element Contains" owner="SeleniumLibrary">
+<arg>${TITLE_DISPLAY}</arg>
+<arg>Untitled</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` contains ``text``.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:24.441241" elapsed="0.000010"/>
+</kw>
+<kw name="Verify Database State" owner="common">
+<arg>1</arg>
+<arg>1</arg>
+<doc>Verifies the current state of the database</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:24.441382" elapsed="0.000014"/>
+</kw>
+<doc>Test editing and saving with empty fields</doc>
+<tag>content</tag>
+<tag>empty</tag>
+<tag>standard</tag>
+<status status="FAIL" start="2025-02-13T18:11:18.512853" elapsed="5.928637">Element with locator 'css=div[data-testid="note-title"]' not found.</status>
+</test>
+<test id="s1-t6" name="Multiple Standard Notes" line="122">
+<kw name="Reset Test Environment" owner="common" type="SETUP">
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.442112" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.442029" elapsed="0.000117"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.443374" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.442298" elapsed="0.001100"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:24.443451" elapsed="0.000031"/>
+</return>
+<msg time="2025-02-13T18:11:24.443552" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:24.442211" elapsed="0.001357"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.443980" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.443797" elapsed="0.000200"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.448663" level="INFO">${cabinets_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.444059" elapsed="0.004645"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.449393" level="INFO">${notes_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.448813" elapsed="0.000600"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.449771" level="INFO">Deleted 1 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.449499" elapsed="0.000313"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.450067" level="INFO">Deleted 1 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.449866" elapsed="0.000228"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:11:24.443657" elapsed="0.006473"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.450458" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.450336" elapsed="0.000135"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.451467" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.450522" elapsed="0.000962"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.451649" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.451547" elapsed="0.000129"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.452334" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.451731" elapsed="0.000621"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.452533" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.452420" elapsed="0.000141"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.452666" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.452614" elapsed="0.000099"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:11:24.450211" elapsed="0.002555"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.452966" elapsed="0.000397"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:24.452838" elapsed="0.000624"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:24.453665" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.453551" elapsed="0.000160"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:11:24.441940" elapsed="0.011814"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:24.453895" level="INFO">Opening url 'http://localhost:3000'</msg>
+<arg>${FRONTEND_URL}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.453822" elapsed="0.119139"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.app-container</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.573277" elapsed="0.014892"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:24.747800" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-303.png"&gt;&lt;img src="selenium-screenshot-303.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:24.747892" level="FAIL">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</msg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:11:24.588434" elapsed="0.159728">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</status>
+</kw>
+<msg time="2025-02-13T18:11:24.748234" level="INFO">${overlay_present} = False</msg>
+<var>${overlay_present}</var>
+<arg>Element Should Be Visible</arg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.588323" elapsed="0.159922"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${overlay_present}</arg>
+<arg>Press Keys</arg>
+<arg>None</arg>
+<arg>ESC</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.748338" elapsed="0.000067"/>
+</kw>
+<doc>Resets the test environment between tests</doc>
+<status status="PASS" start="2025-02-13T18:11:24.441807" elapsed="0.306632"/>
+</kw>
+<kw name="Create New Cabinet" owner="common">
+<kw name="Wait Until Element Is Not Visible" owner="SeleniumLibrary">
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is not visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.748821" elapsed="0.003835"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.752765" elapsed="0.008904"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:24.761889" level="INFO">Clicking element 'xpath=//*[@data-testid='cabinet-selector']'.</msg>
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.761787" elapsed="0.031430"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.793346" elapsed="0.008854"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:24.802435" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']'.</msg>
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.802326" elapsed="0.037585"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.840044" elapsed="0.008425"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:24.848793" level="INFO">Typing text 'Test Cabinet' into text field 'css=input[placeholder='Cabinet name']'.</msg>
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>${cabinet_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.848643" elapsed="0.044612"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.893383" elapsed="0.009158"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:24.902783" level="INFO">Clicking element 'xpath=//button[@type='submit'][text()='Create Cabinet']'.</msg>
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.902673" elapsed="0.029253"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:25.435014" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:24.932239" elapsed="0.503209"/>
+</kw>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:24.932080" elapsed="0.504165"/>
+</kw>
+<arg>${TEST_CABINET_NAME}</arg>
+<doc>Creates a new cabinet with the given name</doc>
+<status status="PASS" start="2025-02-13T18:11:24.748554" elapsed="0.687794"/>
+</kw>
+<kw name="Wait Until Cabinet List Updates" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:25.940350" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:25.438111" elapsed="0.502517"/>
+</kw>
+<doc>Waits for the cabinet list to update after an operation</doc>
+<status status="PASS" start="2025-02-13T18:11:25.437335" elapsed="0.503513"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:25.942777" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:25.942482" elapsed="0.047145"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:25.990007" elapsed="0.017615"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:26.007971" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:26.007777" elapsed="0.043552"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:26.051611" elapsed="0.214827"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:27.269763" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:26.266576" elapsed="1.003653"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:27.273075" level="INFO">Typing text 'Note 1' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:27.272689" elapsed="0.072507"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:27.270943" elapsed="0.074317"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:27.345801" level="INFO">Typing text 'Content 1' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:27.345695" elapsed="0.045432"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:27.345358" elapsed="0.045846"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:27.391570" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:27.662035" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:27.662103" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:27.391313" elapsed="0.275113"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:28.668153" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:27.666795" elapsed="1.001803"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:27.666589" elapsed="1.002378"/>
+</kw>
+<arg>Note ${index}</arg>
+<arg>Content ${index}</arg>
+<status status="PASS" start="2025-02-13T18:11:25.941884" elapsed="2.727270"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:29.672047" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:28.671024" elapsed="1.001503"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:28.669867" elapsed="1.002997"/>
+</kw>
+<var name="${index}">1</var>
+<status status="PASS" start="2025-02-13T18:11:25.941584" elapsed="3.731392"/>
+</iter>
+<iter>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:29.675301" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:29.674829" elapsed="0.059064"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:29.734046" elapsed="0.009877"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:29.744184" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:29.744056" elapsed="0.031574"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:29.775758" elapsed="0.016458"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:30.793528" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:29.792340" elapsed="1.001413"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:30.795578" level="INFO">Typing text 'Note 2' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:30.794961" elapsed="0.061383"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:30.794161" elapsed="0.062255"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:30.856986" level="INFO">Typing text 'Content 2' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:30.856878" elapsed="0.048520"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:30.856522" elapsed="0.048949"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:30.906249" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:31.181474" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:31.181547" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:30.905578" elapsed="0.281101"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:32.190019" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:31.187216" elapsed="1.003271"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:31.186935" elapsed="1.003952"/>
+</kw>
+<arg>Note ${index}</arg>
+<arg>Content ${index}</arg>
+<status status="PASS" start="2025-02-13T18:11:29.673924" elapsed="2.517153"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:33.194547" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:32.192674" elapsed="1.002414"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:32.191699" elapsed="1.005687"/>
+</kw>
+<var name="${index}">2</var>
+<status status="PASS" start="2025-02-13T18:11:29.673472" elapsed="3.524089"/>
+</iter>
+<iter>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:33.199534" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:33.199254" elapsed="0.061821"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:33.261214" elapsed="0.009836"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:33.271347" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:33.271200" elapsed="0.036497"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:33.308012" elapsed="0.015686"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:34.325815" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:33.323833" elapsed="1.002095"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:34.326930" level="INFO">Typing text 'Note 3' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:34.326706" elapsed="0.060603"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:34.326114" elapsed="0.061264"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:34.387983" level="INFO">Typing text 'Content 3' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:34.387865" elapsed="0.046454"/>
+</kw>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:34.387485" elapsed="0.046938"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:34.434840" level="INFO">Sending key(s) ('TAB',) to css=.ProseMirror[contenteditable="true"] element.</msg>
+<msg time="2025-02-13T18:11:34.706426" level="INFO">Pressing special key TAB to element.</msg>
+<msg time="2025-02-13T18:11:34.706531" level="INFO">Releasing special key TAB.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-02-13T18:11:34.434562" elapsed="0.277430"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:35.714862" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:34.712730" elapsed="1.002474"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:34.712332" elapsed="1.003214"/>
+</kw>
+<arg>Note ${index}</arg>
+<arg>Content ${index}</arg>
+<status status="PASS" start="2025-02-13T18:11:33.198637" elapsed="2.517059"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:36.718092" level="INFO">Slept 1 second.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:35.717119" elapsed="1.001309"/>
+</kw>
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:35.716267" elapsed="1.002417"/>
+</kw>
+<var name="${index}">3</var>
+<status status="PASS" start="2025-02-13T18:11:33.198122" elapsed="3.520646"/>
+</iter>
+<var>${index}</var>
+<value>1</value>
+<value>4</value>
+<status status="PASS" start="2025-02-13T18:11:25.941136" elapsed="10.777780"/>
+</for>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-02-13T18:11:36.721113" level="INFO">${note_title} = (css=div[data-testid="note-title"])[1]</msg>
+<var>${note_title}</var>
+<arg>(${TITLE_DISPLAY})[${index}]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-02-13T18:11:36.720601" elapsed="0.000550"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-02-13T18:11:36.721550" level="INFO">${note_content} = (css=.ProseMirror[contenteditable="true"])[1]</msg>
+<var>${note_content}</var>
+<arg>(${NOTE_EDITOR})[${index}]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-02-13T18:11:36.721314" elapsed="0.000269"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:42.010211" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-304.png"&gt;&lt;img src="selenium-screenshot-304.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:42.010393" level="FAIL">Element '(css=div[data-testid="note-title"])[1]' not visible after 5 seconds.</msg>
+<arg>${note_title}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:11:36.721731" elapsed="5.289091">Element '(css=div[data-testid="note-title"])[1]' not visible after 5 seconds.</status>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${note_content}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:42.010988" elapsed="0.000021"/>
+</kw>
+<kw name="Element Should Contain" owner="SeleniumLibrary">
+<arg>${note_title}</arg>
+<arg>Note ${index}</arg>
+<doc>Verifies that element ``locator`` contains text ``expected``.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:42.011064" elapsed="0.000012"/>
+</kw>
+<kw name="Element Should Contain" owner="SeleniumLibrary">
+<arg>${note_content}</arg>
+<arg>Content ${index}</arg>
+<doc>Verifies that element ``locator`` contains text ``expected``.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:42.011117" elapsed="0.000010"/>
+</kw>
+<var name="${index}">1</var>
+<status status="FAIL" start="2025-02-13T18:11:36.720224" elapsed="5.290957">Element '(css=div[data-testid="note-title"])[1]' not visible after 5 seconds.</status>
+</iter>
+<var>${index}</var>
+<value>1</value>
+<value>4</value>
+<status status="FAIL" start="2025-02-13T18:11:36.719705" elapsed="5.291523">Element '(css=div[data-testid="note-title"])[1]' not visible after 5 seconds.</status>
+</for>
+<kw name="Verify Database State" owner="common">
+<arg>1</arg>
+<arg>3</arg>
+<doc>Verifies the current state of the database</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:42.011391" elapsed="0.000020"/>
+</kw>
+<doc>Test creating and managing multiple standard notes</doc>
+<tag>multiple</tag>
+<tag>standard</tag>
+<status status="FAIL" start="2025-02-13T18:11:24.441614" elapsed="17.569901">Element '(css=div[data-testid="note-title"])[1]' not visible after 5 seconds.</status>
+</test>
+<test id="s1-t7" name="Note Content HTML Sanitization" line="148">
+<kw name="Reset Test Environment" owner="common" type="SETUP">
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.012777" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.012690" elapsed="0.000129"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.014231" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.012982" elapsed="0.001263"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:42.014280" elapsed="0.000042"/>
+</return>
+<msg time="2025-02-13T18:11:42.014408" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:42.012891" elapsed="0.001540"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.014863" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.014641" elapsed="0.000245"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.026422" level="INFO">${cabinets_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.014978" elapsed="0.011473"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.027210" level="INFO">${notes_result} = DeleteResult({'n': 3, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.026563" elapsed="0.000660"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.027526" level="INFO">Deleted 1 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.027276" elapsed="0.000290"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.027819" level="INFO">Deleted 3 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.027617" elapsed="0.000228"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:11:42.014514" elapsed="0.013371"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.028208" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.028093" elapsed="0.000145"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.029969" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.028317" elapsed="0.001672"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.030205" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.030079" elapsed="0.000153"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.031533" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.030285" elapsed="0.001262"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.031688" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.031603" elapsed="0.000107"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.031807" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.031759" elapsed="0.000083"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:11:42.027971" elapsed="0.003903"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.032043" elapsed="0.000470"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:42.031934" elapsed="0.000635"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:42.032727" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.032647" elapsed="0.000111"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:11:42.012407" elapsed="0.020382"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:42.032909" level="INFO">Opening url 'http://localhost:3000'</msg>
+<arg>${FRONTEND_URL}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.032842" elapsed="0.119094"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=.app-container</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.152073" elapsed="0.013169"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:42.334899" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-305.png"&gt;&lt;img src="selenium-screenshot-305.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-02-13T18:11:42.335011" level="FAIL">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</msg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="FAIL" start="2025-02-13T18:11:42.165482" elapsed="0.169830">Element with locator 'css=div[data-state="open"][class*="fixed inset-0"]' not found.</status>
+</kw>
+<msg time="2025-02-13T18:11:42.335380" level="INFO">${overlay_present} = False</msg>
+<var>${overlay_present}</var>
+<arg>Element Should Be Visible</arg>
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.165379" elapsed="0.170012"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>${overlay_present}</arg>
+<arg>Press Keys</arg>
+<arg>None</arg>
+<arg>ESC</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.335480" elapsed="0.000066"/>
+</kw>
+<doc>Resets the test environment between tests</doc>
+<status status="PASS" start="2025-02-13T18:11:42.012267" elapsed="0.323312"/>
+</kw>
+<kw name="Create New Cabinet" owner="common">
+<kw name="Wait Until Element Is Not Visible" owner="SeleniumLibrary">
+<arg>css=div[data-state="open"][class*="fixed inset-0"]</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is not visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.335815" elapsed="0.003737"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.339737" elapsed="0.008408"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:42.348280" level="INFO">Clicking element 'xpath=//*[@data-testid='cabinet-selector']'.</msg>
+<arg>xpath=//*[@data-testid='cabinet-selector']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.348222" elapsed="0.031930"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.380305" elapsed="0.008370"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:42.388906" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']'.</msg>
+<arg>xpath=//div[contains(@role, 'menu')]//span[text()='New Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.388800" elapsed="0.036036"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.424978" elapsed="0.008149"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:42.433427" level="INFO">Typing text 'Test Cabinet' into text field 'css=input[placeholder='Cabinet name']'.</msg>
+<arg>css=input[placeholder='Cabinet name']</arg>
+<arg>${cabinet_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.433264" elapsed="0.046553"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.479946" elapsed="0.008450"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:42.488634" level="INFO">Clicking element 'xpath=//button[@type='submit'][text()='Create Cabinet']'.</msg>
+<arg>xpath=//button[@type='submit'][text()='Create Cabinet']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.488520" elapsed="0.030394"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:43.019746" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:42.519197" elapsed="0.501066"/>
+</kw>
+<doc>Waits for database operations to complete</doc>
+<status status="PASS" start="2025-02-13T18:11:42.519047" elapsed="0.501445"/>
+</kw>
+<arg>${TEST_CABINET_NAME}</arg>
+<doc>Creates a new cabinet with the given name</doc>
+<status status="PASS" start="2025-02-13T18:11:42.335694" elapsed="0.684880"/>
+</kw>
+<kw name="Wait Until Cabinet List Updates" owner="common">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:43.522949" level="INFO">Slept 500 milliseconds.</msg>
+<arg>${timeout}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:43.021455" elapsed="0.501774"/>
+</kw>
+<doc>Waits for the cabinet list to update after an operation</doc>
+<status status="PASS" start="2025-02-13T18:11:43.020983" elapsed="0.502460"/>
+</kw>
+<kw name="Create Standard Note">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:43.525311" level="INFO">Clicking element 'xpath=//button[contains(@class, 'text-[#6b7280]')][contains(., 'Add Note')]'.</msg>
+<arg>${ADD_NOTE_BTN}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:43.525057" elapsed="0.035923"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:43.561105" elapsed="0.222994"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:43.784381" level="INFO">Clicking element 'xpath=//div[contains(@role, 'menuitem')]//span[text()='Standard Note']'.</msg>
+<arg>${STANDARD_NOTE_OPTION}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:43.784251" elapsed="0.031052"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-02-13T18:11:43.815434" elapsed="0.025890"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-02-13T18:11:44.842366" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-02-13T18:11:43.841481" elapsed="1.001094"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-02-13T18:11:44.843998" level="INFO">Typing text 'HTML Test' into text field 'css=.ProseMirror[contenteditable="true"]'.</msg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-02-13T18:11:44.843751" elapsed="0.079552"/>
+</kw>
+<arg>'${title}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${title}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-02-13T18:11:44.842920" elapsed="0.080452"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<msg time="2025-02-13T18:11:44.923811" level="FAIL">Evaluating expression "'&lt;p&gt;Safe content&lt;/p&gt;&lt;script&gt;alert('test')&lt;/script&gt;' != ''" failed: SyntaxError: invalid syntax (&lt;string&gt;, line 1)</msg>
+<arg>'${content}' != '${EMPTY}'</arg>
+<arg>Input Text</arg>
+<arg>${NOTE_EDITOR}</arg>
+<arg>${content}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="FAIL" start="2025-02-13T18:11:44.923475" elapsed="0.000417">Evaluating expression "'&lt;p&gt;Safe content&lt;/p&gt;&lt;script&gt;alert('test')&lt;/script&gt;' != ''" failed: SyntaxError: invalid syntax (&lt;string&gt;, line 1)</status>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>TAB</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924027" elapsed="0.000012"/>
+</kw>
+<kw name="Wait For Database Operation" owner="common">
+<arg>1s</arg>
+<doc>Waits for database operations to complete</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924105" elapsed="0.000014"/>
+</kw>
+<arg>HTML Test</arg>
+<arg>&lt;p&gt;Safe content&lt;/p&gt;&lt;script&gt;alert('test')&lt;/script&gt;</arg>
+<status status="FAIL" start="2025-02-13T18:11:43.524044" elapsed="1.400129">Evaluating expression "'&lt;p&gt;Safe content&lt;/p&gt;&lt;script&gt;alert('test')&lt;/script&gt;' != ''" failed: SyntaxError: invalid syntax (&lt;string&gt;, line 1)</status>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${NOTE_EDITOR}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924263" elapsed="0.000011"/>
+</kw>
+<kw name="Get Text" owner="SeleniumLibrary">
+<var>${content}</var>
+<arg>${NOTE_EDITOR}</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924343" elapsed="0.000011"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${content}</arg>
+<arg>Safe content</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924417" elapsed="0.000010"/>
+</kw>
+<kw name="Should Not Match Regexp" owner="BuiltIn">
+<arg>${content}</arg>
+<arg>.*&lt;script&gt;.*</arg>
+<doc>Fails if ``string`` matches ``pattern`` as a regular expression.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924477" elapsed="0.000008"/>
+</kw>
+<kw name="Should Not Match Regexp" owner="BuiltIn">
+<arg>${content}</arg>
+<arg>.*alert\\('test'\\).*</arg>
+<doc>Fails if ``string`` matches ``pattern`` as a regular expression.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924530" elapsed="0.000009"/>
+</kw>
+<kw name="Should Not Match Regexp" owner="BuiltIn">
+<arg>${content}</arg>
+<arg>.*&lt;p&gt;.*</arg>
+<doc>Fails if ``string`` matches ``pattern`` as a regular expression.</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924608" elapsed="0.000010"/>
+</kw>
+<kw name="Verify Database State" owner="common">
+<arg>1</arg>
+<arg>1</arg>
+<doc>Verifies the current state of the database</doc>
+<status status="NOT RUN" start="2025-02-13T18:11:44.924688" elapsed="0.000012"/>
+</kw>
+<doc>Test that HTML content is properly sanitized</doc>
+<tag>content</tag>
+<tag>security</tag>
+<tag>standard</tag>
+<status status="FAIL" start="2025-02-13T18:11:42.012003" elapsed="2.912791">Evaluating expression "'&lt;p&gt;Safe content&lt;/p&gt;&lt;script&gt;alert('test')&lt;/script&gt;' != ''" failed: SyntaxError: invalid syntax (&lt;string&gt;, line 1)</status>
+</test>
+<kw name="Cleanup Test Environment" owner="common" type="TEARDOWN">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" start="2025-02-13T18:11:44.925251" elapsed="0.099149"/>
+</kw>
+<kw name="Clean Database" owner="common">
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.024925" level="INFO">Starting thorough database cleanup...</msg>
+<arg>Starting thorough database cleanup...</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.024844" elapsed="0.000123"/>
+</kw>
+<kw name="Connect To MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.025859" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<arg>pymongo.MongoClient("${MONGODB_URI}")</arg>
+<arg>modules=pymongo</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.025107" elapsed="0.000771"/>
+</kw>
+<return>
+<value>${mongo}</value>
+<status status="PASS" start="2025-02-13T18:11:45.025914" elapsed="0.000027"/>
+</return>
+<msg time="2025-02-13T18:11:45.026007" level="INFO">${mongo} = MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True)</msg>
+<var>${mongo}</var>
+<doc>Creates a connection to MongoDB and returns the client</doc>
+<status status="PASS" start="2025-02-13T18:11:45.025037" elapsed="0.000982"/>
+</kw>
+<kw name="Clean MongoDB Collections" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.026306" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.026188" elapsed="0.000130"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.028819" level="INFO">${cabinets_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${cabinets_result}</var>
+<arg>$db.cabinets.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.026367" elapsed="0.002470"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.029530" level="INFO">${notes_result} = DeleteResult({'n': 1, 'ok': 1.0}, acknowledged=True)</msg>
+<var>${notes_result}</var>
+<arg>$db.notes.delete_many({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.028900" elapsed="0.000642"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.029813" level="INFO">Deleted 1 documents from cabinets collection</msg>
+<arg>Deleted ${cabinets_result.deleted_count} documents from cabinets collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.029591" elapsed="0.000250"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.030157" level="INFO">Deleted 1 documents from notes collection</msg>
+<arg>Deleted ${notes_result.deleted_count} documents from notes collection</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.029892" elapsed="0.000304"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Deletes all documents from relevant collections</doc>
+<status status="PASS" start="2025-02-13T18:11:45.026088" elapsed="0.004155"/>
+</kw>
+<kw name="Verify Collections Empty" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.030570" level="INFO">${db} = Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'notes_manager_test')</msg>
+<var>${db}</var>
+<arg>$mongo.get_database()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.030439" elapsed="0.000145"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.031924" level="INFO">${cabinet_count} = 0</msg>
+<var>${cabinet_count}</var>
+<arg>$db.cabinets.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.030646" elapsed="0.001295"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.032107" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cabinet_count}</arg>
+<arg>0</arg>
+<arg>msg=Cabinets collection still has ${cabinet_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.032009" elapsed="0.000123"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.032970" level="INFO">${notes_count} = 0</msg>
+<var>${notes_count}</var>
+<arg>$db.notes.count_documents({})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.032228" elapsed="0.000767"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.033220" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${notes_count}</arg>
+<arg>0</arg>
+<arg>msg=Notes collection still has ${notes_count} documents</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.033067" elapsed="0.000211"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.033447" level="INFO">All collections verified empty</msg>
+<arg>All collections verified empty</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.033371" elapsed="0.000115"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Verifies that all collections are empty</doc>
+<status status="PASS" start="2025-02-13T18:11:45.030340" elapsed="0.003180"/>
+</kw>
+<kw name="Disconnect From MongoDB" owner="common">
+<kw name="Evaluate" owner="BuiltIn">
+<arg>$mongo.close()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.033689" elapsed="0.000603"/>
+</kw>
+<arg>${mongo}</arg>
+<doc>Safely closes the MongoDB connection</doc>
+<status status="PASS" start="2025-02-13T18:11:45.033584" elapsed="0.000767"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-02-13T18:11:45.034529" level="INFO">Database cleanup completed and verified</msg>
+<arg>Database cleanup completed and verified</arg>
+<arg>console=True</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-02-13T18:11:45.034441" elapsed="0.000127"/>
+</kw>
+<doc>Completely cleans the test database and verifies the cleanup</doc>
+<status status="PASS" start="2025-02-13T18:11:45.024554" elapsed="0.010046"/>
+</kw>
+<doc>Cleans up all test resources</doc>
+<status status="PASS" start="2025-02-13T18:11:44.925168" elapsed="0.109457"/>
+</kw>
+<doc>Test suite for standard note functionality</doc>
+<status status="FAIL" start="2025-02-13T18:10:45.436444" elapsed="59.598207"/>
+</suite>
+<statistics>
+<total>
+<stat pass="2" fail="5" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">autosave</stat>
+<stat pass="2" fail="3" skip="0">content</stat>
+<stat pass="0" fail="1" skip="0">empty</stat>
+<stat pass="0" fail="1" skip="0">multiple</stat>
+<stat pass="1" fail="0" skip="0">persistence</stat>
+<stat pass="0" fail="1" skip="0">security</stat>
+<stat pass="0" fail="1" skip="0">smoke</stat>
+<stat pass="2" fail="5" skip="0">standard</stat>
+<stat pass="0" fail="1" skip="0">title</stat>
+</tag>
+<suite>
+<stat pass="2" fail="5" skip="0" id="s1" name="Standard Note Tests">Standard Note Tests</stat>
+</suite>
+</statistics>
+<errors>
+<msg time="2025-02-13T18:10:45.454510" level="WARN">Error in file '/Users/quan/git/NotesManager/tests/robot/common.robot' on line 61: The '[Return]' setting is deprecated. Use the 'RETURN' statement instead.</msg>
+</errors>
+</robot>
