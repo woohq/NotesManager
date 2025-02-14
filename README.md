@@ -99,7 +99,7 @@ python -m pytest
 
 ## 📝 API Documentation
 
-The NotesManager API provides endpoints for managing notes and cabinets. For detailed API documentation, see [API.md](docs/API.md).
+The NotesManager API provides endpoints for managing notes and cabinets.
 
 ### Core Endpoints
 
