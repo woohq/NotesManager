@@ -1,6 +1,6 @@
 # NotesManager - Modern Note-Taking Application
 
-[![License](https://img.shields.io/badge/license-ISC-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.0.0+-green.svg)](https://flask.palletsprojects.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-4.0.0+-green.svg)](https://www.mongodb.com/)
