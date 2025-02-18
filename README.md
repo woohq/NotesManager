@@ -138,6 +138,7 @@ fetch('http://localhost:5001/api/notes', {
 - **Robot Framework**: End-to-end automated testing with SeleniumLibrary
   - Note: I Created a testing roadmap at the beginning of the project, but I have no current plans to finish all the testing suites
   - Testing Roadmap can be found in the root of the tests directory
+  - Look at common.robot for common keywords used in cabinet_tests
 
 ![Automated Tests Running](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExemhiZGI5dG10Ym5ubjFjMXlmZTVmYzhvZHB3YnVhbDk3Y3V2Z3ZmZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/G5l750DD0HBMnu2MRU/giphy.gif))
 
