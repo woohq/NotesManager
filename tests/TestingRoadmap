@@ -1,0 +1,198 @@
+## 1. Cabinet Management Tests
+
+### 1.1 Unit Tests
+- Create new cabinet
+  - Successfully create with valid name
+  - Prevent creation with empty name
+  - Prevent creation with name > 50 characters
+  - Prevent creation with special characters
+  - Prevent duplicate cabinet names
+  - Verify app starts in cabinet-less state with note functionality disabled
+  - Verify app opens in last opened cabinet on subsequent visits
+
+### 1.2 Integration Tests
+- Cabinet State Management
+  - Verify cabinet list updates after creation
+  - Verify cabinet persists after page refresh
+  - Verify cabinet deletion removes associated notes
+  - Verify switching between cabinets loads correct notes
+  - Verify last selected cabinet is remembered on reload
+
+### 1.3 UI Tests
+- Cabinet Selection
+  - Verify dropdown shows all available cabinets
+  - Test cabinet dropdown navigation
+  - Test cabinet deletion confirmation dialog
+  - Test cabinet creation dialog validation messages
+
+## 2. General Note Functionality Tests
+
+### 2.1 Unit Tests
+- Note Creation
+  - Create standard note
+  - Create task note
+  - Create calendar note
+  - Verify correct initialization of each note type
+  - Test note type validation
+
+### 2.2 Integration Tests
+- Note Management
+  - Verify notes persist after refresh
+  - Test note deletion
+  - Verify note order persists after refresh
+  - Test note type switching (if implemented)
+  - Verify notes belong to correct cabinet
+
+### 2.3 UI Tests
+- Drag and Drop
+  - Test note reordering within same cabinet
+  - Verify visual feedback during drag
+  - Test order persistence after drag
+  - Test drag handle functionality
+  - Verify correct order update in database
+
+- Note Operations
+  - Test note expansion/collapse
+  - Verify expansion state persists
+  - Test note title editing
+  - Test delete button functionality
+  - Verify correct loading states
+
+## 3. Individual Note Type Tests
+
+### 3.1 Standard Notes
+- Content Management
+  - Test basic text input
+  - Verify content saves automatically
+  - Test content persistence after refresh
+  - Verify "Untitled" appears when title is empty
+  - Test content editing and saving with empty fields
+
+### 3.2 Task Notes
+- Task Management
+  - Test adding new tasks
+  - Test completing tasks
+  - Test deleting tasks
+  - Verify task state persistence
+  - Verify "Enter Task..." placeholder for empty tasks
+  - Test task content saving and persistence
+
+### 3.3 Calendar Notes
+- Calendar Views
+  - Test month view display
+  - Test week view display
+  - Test view switching
+  - Verify date selection
+  - Test multiple calendar view support
+  - Verify "Enter content for this day..." placeholder in monthly view
+
+- Calendar Data
+  - Test adding entries to dates
+  - Verify entry persistence
+  - Test date navigation
+  - Test week number calculation
+  - Verify content display in different views
+
+## 4. Rich Text Formatting Tests
+
+### 4.1 Unit Tests
+- Text Operations
+  - Test bold formatting
+  - Test italic formatting
+  - Test strikethrough
+  - Test code block formatting
+  - Test blockquote formatting
+
+### 4.2 Integration Tests
+- Format Persistence
+  - Verify formatting persists after save
+  - Test format retention after refresh
+  - Verify HTML sanitization
+  - Test handling of complex formatting combinations
+  - Verify format consistency across different note types
+
+### 4.3 UI Tests
+- Toolbar Functionality
+  - Test toolbar button states
+  - Verify format toggle behavior
+  - Test keyboard shortcuts
+  - Verify toolbar positioning
+  - Test toolbar responsiveness
+
+### 4.4 Edge Cases
+- Content Handling
+  - Test large content blocks
+  - Test copy/paste behavior
+  - Test handling of external formatting
+  - Verify link handling
+  - Test image handling if implemented
+
+## 5. Performance Tests
+
+### 5.1 Load Testing
+- Test with large number of notes
+- Test with large number of cabinets
+- Test with large text content
+- Test with multiple calendar views
+- Test with many completed tasks
+
+### 5.2 Response Time
+- Measure note save time
+- Measure note load time
+- Test cabinet switching speed
+- Measure format application speed
+- Test drag and drop performance
+
+## 6. Error Handling Tests
+
+### 6.1 Network Issues
+- Test offline behavior
+- Test slow connection handling
+- Verify error messages
+- Test auto-retry functionality
+- Verify data recovery
+
+### 6.2 Input Validation
+- Test invalid input handling
+- Verify error message display
+- Test boundary conditions
+- Verify form validation
+- Test special character handling
+
+## 7. Security Tests
+
+### 7.1 Data Sanitization
+- Test HTML injection prevention
+- Verify XSS protection
+- Test SQL injection prevention
+- Verify safe content storage
+- Test file upload security if implemented
+
+### 7.2 Access Control
+- Test cabinet isolation
+- Verify note privacy
+- Test authorization if implemented
+- Test session handling
+- Verify CORS configuration
+
+## 8. Cross-browser Testing
+
+### 8.1 Browser Compatibility
+- Test in Chrome
+- Test in Firefox
+- Test in Safari
+- Test in Edge
+
+## 10. Integration Testing Tools
+
+### 10.1 Robot Framework Test Examples
+```robotframework
+*** Test Cases ***
+Create And Verify Note
+    Open Browser    ${URL}    chrome
+    Click Element    id=create-note-button
+    Input Text    id=note-title    Test Note
+    Input Text    id=note-content    Test Content
+    Click Element    id=save-note
+    Page Should Contain    Test Note
+    [Teardown]    Close Browser
