@@ -53,6 +53,17 @@
   padding: 4px 0;
   width: 100%;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.title-input:focus {
+  outline: none;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.title-input::selection {
+  background: transparent;
 }
 
 .title-input::placeholder {
