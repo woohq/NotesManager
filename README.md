@@ -19,6 +19,8 @@ A sophisticated full-stack note-taking application built with React and Flask, f
 - **Real-time Updates**: Automatic saving and synchronization
 - **Responsive Design**: Seamless experience across devices
 
+![App Demo](https://media.giphy.com/media/DEPy53Pnm71535lhVU/giphy.gif)
+
 ## 🛠️ Technology Stack
 
 ### Frontend
@@ -131,6 +133,13 @@ fetch('http://localhost:5001/api/notes', {
   })
 })
 ```
+
+## 🧪 Testing
+- **Robot Framework**: End-to-end automated testing with SeleniumLibrary
+- **Test Suites**: 
+- **Custom Keywords**: Reusable test actions and verifications
+
+![Automated Tests Running](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExemhiZGI5dG10Ym5ubjFjMXlmZTVmYzhvZHB3YnVhbDk3Y3V2Z3ZmZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/G5l750DD0HBMnu2MRU/giphy.gif))
 
 ## 💡 Development Practices
 
