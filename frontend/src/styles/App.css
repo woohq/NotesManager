@@ -47,14 +47,6 @@ body {
   background-color: rgba(255, 255, 255, 0.95);
 }
 
-.cabinet-header h1 {
-  margin: 0;
-  color: #1a1a1a;
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.5px;
-}
-
 /* Notes container */
 .notes-container {
   padding: 20px;
@@ -62,48 +54,18 @@ body {
   flex-direction: column;
   gap: 0;
   min-height: calc(100% - 80px);
+  position: relative;
 }
 
-/* Placeholder styling */
-.notes-container [data-rbd-placeholder-context-id] {
-  margin-bottom: 15px;
-  opacity: 0.6;
+/* Drag and drop specific styles */
+.note-wrapper {
+  position: relative;
+  transform-origin: 0 0;
 }
 
-.notes-container.dragging-over {
-  background-color: #f8f9fa;
-}
-
-/* Button styling for add actions */
-.add-action-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  color: #666;
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.add-action-button:hover {
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
-  color: #374151;
-}
-
-/* Empty state */
-.no-notes {
-  text-align: center;
-  color: #666;
-  font-style: italic;
-  padding: 40px 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  margin: 20px;
+/* Override react-beautiful-dnd positioning */
+[data-rbd-draggable-context-id] {
+  transform-origin: 0 0 !important;
 }
 
 /* Scrollbar styling */
@@ -124,12 +86,6 @@ body {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-/* Dropdown menu styling */
-[data-radix-popper-content-wrapper] {
-  z-index: 50;
-}
-
-/* Make sure note titles are always above dropdowns when editing */
 .note-header.editing {
   z-index: 100;
   position: relative;
@@ -141,7 +97,7 @@ body {
     margin: 0;
     border-radius: 0;
   }
-
+  
   .app-container {
     padding: 0;
   }

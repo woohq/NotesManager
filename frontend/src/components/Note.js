@@ -12,7 +12,6 @@ const Note = ({
   onEditorFocus,
   onEditorBlur
 }) => {
-  // Initialize isExpanded based on note.isExpanded if it exists, otherwise use default logic
   const [isExpanded, setIsExpanded] = useState(() => {
     if (note.isExpanded !== undefined) {
       return note.isExpanded;
@@ -170,7 +169,6 @@ const Note = ({
     }, 200);
   };
 
-  // Only update expansion state when explicitly changed, not on every note update
   useEffect(() => {
     if (note.isExpanded !== undefined && note._id === localNote._id) {
       setIsExpanded(note.isExpanded);
@@ -212,10 +210,7 @@ const Note = ({
       data-position={note.order}
       data-testid={`note-${note.order}`}
     >
-      <div
-        className={`note ${isExpanded ? 'expanded' : ''}`}
-        tabIndex={-1}
-      >
+      <div className={`note ${isExpanded ? 'expanded' : ''}`}>
         <div
           className={`note-header ${isEditingTitle ? 'editing' : ''}`}
           onClick={handleHeaderClick}
@@ -252,12 +247,9 @@ const Note = ({
             ×
           </button>
         </div>
-
+        
         {isExpanded && (
-          <div
-            className="note-content"
-            data-testid={`note-content-${note.order}`}
-          >
+          <div className="note-content" data-testid={`note-content-${note.order}`}>
             {renderContent()}
           </div>
         )}

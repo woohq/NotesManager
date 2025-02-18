@@ -255,3 +255,48 @@ def delete_note(note_id):
     except Exception as e:
         logger.error(f"Server error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+    
+@bp.route('/batch-update-order', methods=['POST'])
+def batch_update_order():
+    """Update the order of multiple notes atomically"""
+    try:
+        if not hasattr(current_app, 'db'):
+            return jsonify({'error': 'Database not initialized'}), 500
+            
+        updates = request.get_json()
+        if not updates or not isinstance(updates, list):
+            return jsonify({'error': 'Invalid update data'}), 400
+
+        # Verify all notes exist and are in the same cabinet
+        note_ids = [ObjectId(update['_id']) for update in updates]
+        existing_notes = list(current_app.db.notes.find({'_id': {'$in': note_ids}}))
+        
+        if len(existing_notes) != len(updates):
+            return jsonify({'error': 'Some notes not found'}), 404
+            
+        # Verify all notes are in the same cabinet
+        cabinet_ids = set(note['cabinet_id'] for note in existing_notes)
+        if len(cabinet_ids) != 1:
+            return jsonify({'error': 'Notes must be in the same cabinet'}), 400
+
+        # Update each note's order
+        for update in updates:
+            current_app.db.notes.update_one(
+                {'_id': ObjectId(update['_id'])},
+                {'$set': {'order': update['order']}}
+            )
+
+        # Return the updated notes in their new order
+        updated_notes = list(current_app.db.notes.find(
+            {'_id': {'$in': note_ids}}
+        ).sort('order', 1))
+        
+        # Convert ObjectIds to strings
+        for note in updated_notes:
+            note['_id'] = str(note['_id'])
+
+        return jsonify(updated_notes)
+
+    except Exception as e:
+        logger.error(f"Error in batch order update: {str(e)}")
+        return jsonify({'error': str(e)}), 500
